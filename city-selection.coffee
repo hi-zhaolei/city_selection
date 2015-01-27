@@ -20,62 +20,62 @@
 			isBoolean : (bool) -> toString.call( bool ) is '[object Boolean]'
 			isObject : (obj) -> obj is Object obj
 			isEmpty : (obj) ->
-			  return yes if obj is null
-			  return obj.length is 0 if @isArray(obj) or @isString(obj)
-			  for key of obj
-			  	return no if `key in obj`
-			  yes
+				return yes if obj is null
+				return obj.length is 0 if @isArray(obj) or @isString(obj)
+				for key of obj
+					return no if `key in obj`
+				yes
 			isDefined : -> typeof arguments[0] isnt 'undefined'
 			# Retrieve the names of an object's properties.
 			# Delegates to **ECMAScript 5**'s native `Object.keys`
 			keys : (obj) ->
 				if Object.keys
 					return Object.keys obj
-			  if obj isnt Object(obj)
-			  	throw new TypeError 'Invalid object'
-			  keys = []
-			  `for (var key in obj) if (_.has(obj, key)) keys.push(key);`
-			  keys
+				if obj isnt Object(obj)
+					throw new TypeError 'Invalid object'
+				keys = []
+				`for (var key in obj) if (_.has(obj, key)) keys.push(key);`
+				keys
 			# The cornerstone, an `each` implementation, aka `forEach`.
-		  # Handles objects with the built-in `forEach`, arrays, and raw objects.
-		  # Delegates to **ECMAScript 5**'s native `forEach` if available.
+			# Handles objects with the built-in `forEach`, arrays, and raw objects.
+			# Delegates to **ECMAScript 5**'s native `forEach` if available.
 			each : (obj, iterator, context) ->
-		    return if obj == null
-		    if Array::forEach and obj.forEach is Array::forEach
-		      obj.forEach iterator, context
-		    else if obj.length is +obj.length
-		      `for (var i = 0, length = obj.length; i < length; i++) {
-		        if (iterator.call(context, obj[i], i, obj) === {}) return;
-		      }`
-		   	else
-		   		`var keys = _.keys(obj);
-		      for (var i = 0, length = keys.length; i < length; i++) {
-		        if (iterator.call(context, obj[keys[i]], keys[i], obj) === {}) return;
-		      }`
-		    yes
-		  extend : (obj) ->
-		    _.each slice.call(arguments, 1), (source) ->
-		      if source
-		      	for prop of source
-		      		obj[prop] = source[prop]
-		   	obj
-		  without : (array) -> _.difference array, slice.call arguments, 1
-		  # Take the difference between one array and a number of other arrays.
-		  # Only the elements present in just the first array will remain.
-		 	difference : (array) ->
-		 		rest = concat.apply ArrayProto, slice.call arguments, 1
-		 		_.filter array, (value) -> not _.contains rest, value
-		  # Return all the elements that pass a truth test.
-		  # Delegates to **ECMAScript 5**'s native `filter` if available.
-		  # Aliased as `select`.
-		  filter : -> (obj, iterator, context) ->
-		  	results = []
-		  	return results if obj == null
-		  	return obj.filter(iterator, context) if nativeFilter and obj.filter is nativeFilter
-		    _.each obj, (value, index, list) ->
-		      if iterator.call context, value, index, list
-		      	results.push value
-		    results
+				return if obj == null
+				if Array::forEach and obj.forEach is Array::forEach
+					obj.forEach iterator, context
+				else if obj.length is +obj.length
+					`for (var i = 0, length = obj.length; i < length; i++) {
+						if (iterator.call(context, obj[i], i, obj) === {}) return;
+					}`
+				else
+					`var keys = _.keys(obj);
+					for (var i = 0, length = keys.length; i < length; i++) {
+						if (iterator.call(context, obj[keys[i]], keys[i], obj) === {}) return;
+					}`
+				yes
+			extend : (obj) ->
+				_.each slice.call(arguments, 1), (source) ->
+					if source
+						for prop of source
+							obj[prop] = source[prop]
+				obj
+			without : (array) -> _.difference array, slice.call arguments, 1
+			# Take the difference between one array and a number of other arrays.
+			# Only the elements present in just the first array will remain.
+			difference : (array) ->
+				rest = concat.apply ArrayProto, slice.call arguments, 1
+				_.filter array, (value) -> not _.contains rest, value
+			# Return all the elements that pass a truth test.
+			# Delegates to **ECMAScript 5**'s native `filter` if available.
+			# Aliased as `select`.
+			filter : -> (obj, iterator, context) ->
+				results = []
+				return results if obj == null
+				return obj.filter(iterator, context) if nativeFilter and obj.filter is nativeFilter
+				_.each obj, (value, index, list) ->
+					if iterator.call context, value, index, list
+						results.push value
+				results
 		# 视图层
 		class View
 			initialize : ->
@@ -106,15 +106,15 @@
 				else if @[value]
 					arr = key.split ' '
 					if arr.length is 1
-	        	@$el.on arr[0], (ev) ->
-	        		_this.oTarget = $ @
-	        		ev.stopPropagation()
-	        		_this[value]()
-	        else
-	        	@$el.on arr.shift(), (if arr.length is 1 then arr[0] else arr.join(' ')), (ev) ->
-	        		_this.oTarget = $ @
-	        		ev.stopPropagation()
-	        		_this[value]()
+						@$el.on arr[0], (ev) ->
+							_this.oTarget = $ @
+							ev.stopPropagation()
+							_this[value]()
+					else
+						@$el.on arr.shift(), (if arr.length is 1 then arr[0] else arr.join(' ')), (ev) ->
+							_this.oTarget = $ @
+							ev.stopPropagation()
+							_this[value]()
 				else
 					# console.log key
 					console.warn value + '方法不存在'
@@ -141,88 +141,87 @@
 				@$el.on 'click', '.Close', => @close()
 				super
 			getOptions : (json)-> # 参数设置
-			  # 默认参数
-			  defaults =
-			    drag : yes,       # {boolean}   是否绑定拖拽事件
-			    lock : yes,       # {boolean}   是否允许ESC键来关闭弹出层
-			    callback : null     # {function}      关闭弹出层后执行的回调函数
-			    success : null  # {function} 确认按钮
-			    title : '这是一个弹层'      # {string}     对话框标题
-			    cancel : no            # {boolean}      关闭按钮是否显示，如不显示，确认按钮默认为关闭对话框
-			    width : 600               # {对话框宽度}    默认600
-			  if json?
-			  	delete json.data
-			  	_.extend defaults, json 
-			  defaults
+				# 默认参数
+				defaults =
+					drag : yes,       # {boolean}   是否绑定拖拽事件
+					lock : yes,       # {boolean}   是否允许ESC键来关闭弹出层
+					callback : null     # {function}      关闭弹出层后执行的回调函数
+					success : null  # {function} 确认按钮
+					title : '这是一个弹层'      # {string}     对话框标题
+					cancel : no            # {boolean}      关闭按钮是否显示，如不显示，确认按钮默认为关闭对话框
+					width : 600               # {对话框宽度}    默认600
+				if json?
+					delete json.data
+					_.extend defaults, json
+				defaults
 			setPosition : ( elem ) ->
-			  elem.css
-			    marginTop : -@$el.outerHeight() / 2
-			    marginLeft :  -@$el.outerWidth() / 2
+				elem.css
+					marginTop : -@$el.outerHeight() / 2
+					marginLeft :  -@$el.outerWidth() / 2
 			createDialog : ->    # 创建弹出层 @return { Object } 弹出层
-			  tit = @options.title
-			  iW = @options.width
-			  str = '<div class="zl-popup fade" tabindex="-1"><div class="zl-popup-dialog" style="width: ' + iW + 'px;"><div class="zl-popup-content"><div class="zl-popup-header"><button type="button" class="close Close">&times;</button><h4 class="zl-popup-title">' + tit + '</h4></div><div class="zl-popup-body"></div><div class="zl-popup-footer">' + (if @options.cancel then '<button type="button" class="btn btn-default Close">取消</button>' else '') + '<button type="button" class="btn btn-info ' + (if @options.cancel then '' else 'Close') + '">确定</button>' + '</div></div><!-- /.zl-popup-content --></div><!-- /.zl-popup-dialog --></div><!-- /.zl-popup -->'
-			  oBox = $(str)
-			  if @template
-			    oBox.find('.zl-popup-body').html @template
-			  else
-			    @$el.appendTo oBox.find('.zl-popup-body')
-			  oBox.appendTo 'body'   
+				tit = @options.title
+				iW = @options.width
+				str = '<div class="zl-popup fade" tabindex="-1"><div class="zl-popup-dialog" style="width: ' + iW + 'px;"><div class="zl-popup-content"><div class="zl-popup-header"><button type="button" class="close Close">&times;</button><h4 class="zl-popup-title">' + tit + '</h4></div><div class="zl-popup-body"></div><div class="zl-popup-footer">' + (if @options.cancel then '<button type="button" class="btn btn-default Close">取消</button>' else '') + '<button type="button" class="btn btn-info ' + (if @options.cancel then '' else 'Close') + '">确定</button>' + '</div></div><!-- /.zl-popup-content --></div><!-- /.zl-popup-dialog --></div><!-- /.zl-popup -->'
+				oBox = $(str)
+				if @template
+					oBox.find('.zl-popup-body').html @template
+				else
+					@$el.appendTo oBox.find('.zl-popup-body')
+				oBox.appendTo 'body'
 			open : ->
-			  data = @data or @model.data
-			  data.id and location.hash = data.id
-			  $('body').addClass 'zl-popup-open'
-			  @$el.show()
-			  setTimeout(
-			    =>
-			      @$el.addClass('in').focus()
-			    0)
-			  # 自动关闭弹出层
-			  # 确认窗口已经打开
-			  @isOpen = yes
-			  @
+				data = @data or @model.data
+				data.id and location.hash = data.id
+				$('body').addClass 'zl-popup-open'
+				@$el.show()
+				setTimeout(
+					=> @$el.addClass('in').focus()
+					0)
+				# 自动关闭弹出层
+				# 确认窗口已经打开
+				@isOpen = yes
+				@
 			close : ->
-			  options = @options
-			  data = @data or @model.data
-			  # 创建对象引用
-			  ele = @$el
-			  # 修改hash值
-			  data.id and history.replaceState null, top.document.title , '#'
-			  # 隐藏弹出层
-			  $('body').removeClass 'zl-popup-open'
-			  ele.removeClass 'in'
-			  setTimeout(
-			    =>
-			      ele.hide()
-			      # 触发回调
-			      options.callback and options.callback.call @
-			    300)
-			  # 确认窗口关闭
-			  @isOpen = no
+				options = @options
+				data = @data or @model.data
+				# 创建对象引用
+				ele = @$el
+				# 修改hash值
+				data.id and history.replaceState null, top.document.title , '#'
+				# 隐藏弹出层
+				$('body').removeClass 'zl-popup-open'
+				ele.removeClass 'in'
+				setTimeout(
+				  =>
+				    ele.hide()
+				    # 触发回调
+				    options.callback?.call @
+				  300)
+				# 确认窗口关闭
+				@isOpen = no
 			renderAgain : ->
-			  @$el.find('.zl-popup-body').html @template
-			  @
+				@$el.find('.zl-popup-body').html @template
+				@
 			# 更新options值
 			updateOption : (key,val) ->
-			  if _.isString key
-			    @options[key] = val
-			  else if _.isObject key
-			    _.extend @options, key
-			  @
+				if _.isString key
+					@options[key] = val
+				else if _.isObject key
+					_.extend @options, key
+				@
 			# 以下是拖拽事件
 			mouseDown : (ev) ->
-			  _this = @
-			  _disX = ev.pageX - @$el.children().offset().left
-			  _disY = ev.pageY - @$el.children().offset().top
-			  $(document).on 'mousemove', (ev) => @mouseMove ev
-			  $(document).on 'mouseup', @mouseUp;
-			  no
+				_this = @
+				_disX = ev.pageX - @$el.children().offset().left
+				_disY = ev.pageY - @$el.children().offset().top
+				$(document).on 'mousemove', (ev) => @mouseMove ev
+				$(document).on 'mouseup', @mouseUp;
+				no
 			mouseMove : (ev) ->
-			  iX = ev.pageX - _disX
-			  iY = ev.pageY - _disY
-			  @$el.children().offset
-			    left : iX
-			    top : iY
+				iX = ev.pageX - _disX
+				iY = ev.pageY - _disY
+				@$el.children().offset
+					left : iX
+					top : iY
 			mouseUp : -> $(document).off('mousemove').off('mouseup')
 		# 城市位置浮层 继承于Popup
 		class CitySelection extends Popup
@@ -231,7 +230,7 @@
 			# 
 			@author = 'leozhao'
 			# 版本记录
-			@version = '1.1.0'
+			@version = '1.1.1'
 			# 本地config可配置项信息，updateConfig调用，请勿修改
 			@settings =
 				# url : 'ajax请求地址，请求参数会以get传递，支持restful接口模式，eg:/city/:id'
@@ -410,11 +409,24 @@
 						'1' : (c) ->
 							if not json['1']
 								json['1'] = {}
-							if not json['1'][ c.province_name ]
-								json['1'][ c.province_name ] = {}
-							json['1'][ c.province_name ][ c.city_level ] = ( json['1'][ c.province_name ][ c.city_level ] or [] ).concat c.city_name
-						'2' : (c) -> json['2'] = ( json['2'] or [] ).concat c.city_name
-						'3' : (c) -> json['3'] = ( json['3'] or [] ).concat c.country_name
+							if c.province_name > 0
+								if not json['1'][ c.province_name ]
+									json['1'][ c.province_name ] = {}
+								if c.city_level > 0
+									if not json['1'][ c.province_name ][ c.city_level ]
+										json['1'][ c.province_name ][ c.city_level ] = []
+									if c.city_name
+										json['1'][ c.province_name ][ c.city_level ].push c.city_name
+						'2' : (c) ->
+							if not json['2']
+								json['2'] = []
+							if c.city_name
+								json['2'].push c.city_name
+						'3' : (c) ->
+							if not json['3']
+								json['3'] = []
+							if c.country_name
+								json['3'].push c.country_name
 					_.each cityArray, (c) -> map[ c.large_region_code ]( c )
 				else
 					console.error 'combine方法出现错误: 参数不能为空'
@@ -507,7 +519,7 @@
 					if id = @data.province
 						@oTarget = @$ '.zl-cc-province-' + id
 						oP = @oTarget.parent()
-						iT = @oTarget.offset().top + @oTarget.height()
+						iT = @oTarget.position().top + @oTarget.height()
 						if iT < oP.scrollTop()
 							oP.scrollTop iT
 						else if iT > oP.scrollTop() + 500
@@ -792,7 +804,3 @@
 		else
 			console.error 'jQuery没有找到，CitySelection无法进行初始化！请确认文件引入和引入顺序！'
 )
-
-
-
-
