@@ -1,0 +1,14 @@
+{
+  "name": "city-selection",
+  "version": "1.0.0",
+  "description": "city area select interface",
+  "main": "city-selection.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "city", "area", "selection", "interface"
+  ],
+  "author": "leozhao",
+  "license": "ISC"
+}
