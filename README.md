@@ -14,6 +14,7 @@ city selection是国内外城市选择前端界面
 		支持修改输入数据格式化方法，支持输出需求格式化数据？！
 兼容的浏览器：IE10+、Chrome、Firefox、Safari，opera <br /> 
 注意!:由于是内部项目控件，只支持下方类型数据结果( 输出 和 输入 ) <br /> 
+```shell
 		[
 			<!-- 大陆 -->
 			{
@@ -33,6 +34,7 @@ city selection是国内外城市选择前端界面
 				"country_name":"\"CONGO,\nTHE DEMOCRATIC REPUBLIC OF THE\""
 				}
 		]
+```
 
 安装
 -----------------------------------
@@ -41,26 +43,30 @@ git clone https://github.com/zlstone/city_selection.git
 ```
 使用
 -----------------------------------
-	### 初始化实例
+### 初始化实例
+		```shell
 		CitySelection.create({
 			style : 'default',
 			success : '数据提交配置；此配置是一个function，将被调用于实例的getData方法内，参数为当前界面的所有选择城市数据',
 			search : '{boolean}是否支持长列表搜索模式，未开放',
 			debug : '{boolean}是否记录log，未开放'
 		})
-	### 打开浮层并初始化城市列表
+		```
+### 打开浮层并初始化城市列表
+		```shell
 		instance.initCityList(model, bool, fn)
 		// model : 需要初始化的数据 [Object]
 		// bool : 是否允许用户操作 [Boolean]
 		// fn : 确认后执行的回调函数 [Fuction]
+		```
 
 更新
 -----------------------------------
-	### 1.2.0
+### 1.2.0
 		修复些许bug
 		修改列表高度跟随特性
 		添加输入和输出省份值为中文的支持
 
-	### 1.1.0
+### 1.1.0
 		修复些许bug
 		添加跟随列表高度跟随特性
