@@ -360,7 +360,7 @@ var __hasProp = {}.hasOwnProperty,
 
       CitySelection.author = 'leozhao';
 
-      CitySelection.version = '1.2.0';
+      CitySelection.version = '1.2.1';
 
       CitySelection.settings = {
         style: 'default',
@@ -671,25 +671,27 @@ var __hasProp = {}.hasOwnProperty,
             "1": function() {
               return {
                 large_region_code: +c,
-                province_name: +p || 0,
-                city_level: +l || 0,
-                city_name: ci || ''
+                province_name: +p || void 0,
+                city_level: +l || void 0,
+                city_name: ci || void 0
               };
             },
             "2": function() {
               return {
                 large_region_code: +c,
-                city_name: p || ''
+                city_name: p || void 0
               };
             },
             "3": function() {
               return {
                 large_region_code: +c,
-                country_name: p || ''
+                country_name: p || void 0
               };
             }
           };
-          return c && record.push(map[c]());
+          if (c) {
+            return record.push(map[c]());
+          }
         };
         slice = Array.prototype.slice;
         (self = function(data) {

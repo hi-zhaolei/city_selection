@@ -234,7 +234,7 @@
       # 
       @author = 'leozhao'
       # 版本记录
-      @version = '1.2.0'
+      @version = '1.2.1'
       # 本地config可配置项信息，updateConfig调用，请勿修改
       @settings =
         # url : 'ajax请求地址，请求参数会以get传递，支持restful接口模式，eg:/city/:id'
@@ -480,16 +480,17 @@
           map = 
             "1" : ->
               large_region_code : +c
-              province_name : +p or 0
-              city_level : +l or 0
-              city_name : ci or ''
+              province_name : +p or undefined
+              city_level : +l or undefined
+              city_name : ci or undefined
             "2" : ->
               large_region_code : +c
-              city_name : p or ''
+              city_name : p or undefined
             "3" : ->
               large_region_code : +c
-              country_name : p or ''
-          c and record.push map[ c ]()
+              country_name : p or undefined
+          if c
+            record.push map[ c ]()
         slice = Array::slice
         ( self = ( data ) ->
           args = slice.call arguments, 1
