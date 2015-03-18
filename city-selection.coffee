@@ -234,7 +234,7 @@
       # 
       @author = 'leozhao'
       # 版本记录
-      @version = '1.2.1'
+      @version = '1.2.2'
       # 本地config可配置项信息，updateConfig调用，请勿修改
       @settings =
         # url : 'ajax请求地址，请求参数会以get传递，支持restful接口模式，eg:/city/:id'
@@ -403,10 +403,14 @@
           @$( '.zl-city-ctn' ).html '无已选择地区'
       # 确认按钮事件
       success : ->
+        keys = _dataTree[1]['provinces']
+        out = @explode().map (m) ->
+          m.province_name = keys[m.province_name].name if m.province_name
+          m
         if @close().config.success
-          @config.success @explode()
+          @config.success out
         else
-          console.log '选择的数据结果：', @explode()
+          console.log '选择的数据结果：', out
           alert '未设置回调方法，数据已打印在console！'
       # 
       # 打印city tree 数据

@@ -360,7 +360,7 @@ var __hasProp = {}.hasOwnProperty,
 
       CitySelection.author = 'leozhao';
 
-      CitySelection.version = '1.2.1';
+      CitySelection.version = '1.2.2';
 
       CitySelection.settings = {
         style: 'default',
@@ -553,10 +553,18 @@ var __hasProp = {}.hasOwnProperty,
       };
 
       CitySelection.prototype.success = function() {
+        var keys, out;
+        keys = _dataTree[1]['provinces'];
+        out = this.explode().map(function(m) {
+          if (m.province_name) {
+            m.province_name = keys[m.province_name].name;
+          }
+          return m;
+        });
         if (this.close().config.success) {
-          return this.config.success(this.explode());
+          return this.config.success(out);
         } else {
-          console.log('选择的数据结果：', this.explode());
+          console.log('选择的数据结果：', out);
           return alert('未设置回调方法，数据已打印在console！');
         }
       };
