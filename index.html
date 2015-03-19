@@ -8,8 +8,10 @@
 <body>
 	<div id="cityControl" style="margin:20px auto; width:400px;"></div>
 	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.0.3/jquery.js"></script>
-	<script type="text/javascript" src="city_data.js"></script>
+	<script type="text/javascript" src="citytree.js"></script>
 	<script type="text/javascript" src="city-selection.js"></script>
-	<script type="text/javascript">CitySelection.create( { tree : cityArray } ).initCityList([],false);</script>
+	<script type="text/javascript">
+		CitySelection.create( { tree : citytree } ).initCityList({ model : [], readonly : false });
+	</script>
 </body>
 </html>
