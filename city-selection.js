@@ -3,7 +3,7 @@ var __hasProp = {}.hasOwnProperty,
 
 (function(factory) {
   return factory(function($) {
-    var CitySelection, Popup, View, css, oStyle, slice, _;
+    var CityInterface, Popup, View, css, oStyle, slice, _;
     css = '/*zl-popup stylesheet*/.zl-popup *{ -webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box; font-size:12px; line-height:24px;} .fade { opacity: 0; -webkit-transition: opacity .2s linear; transition: opacity .2s linear; }.zl-popup-open {overflow: hidden;}.zl-popup.in {opacity: 1;background: rgba(0, 0, 0, 0.4);}.zl-popup {position: fixed;top: 0;right: 0;bottom: 0;left: 0;z-index: 1001;display: none;overflow: auto;overflow-y: scroll;outline: none;}.zl-popup-dialog {width: 600px;margin: 30px auto;position: relative;z-index: 1002;}.zl-popup-content {position: relative;background-color: #fff;border: 1px solid rgba(0, 0, 0, 0.2);outline: 0;background-clip: padding-box;-webkit-box-shadow:0 5px 15px rgba(0, 0, 0, 0.5);box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);}.zl-popup-header {min-height: 16px;padding: 6px 15px;border-bottom: 1px solid #e5e5e5;}.zl-popup-header button.close {float: right;font-size: 21px;font-weight: bold;line-height: 1;color: #000;text-shadow: 0 1px 0 #fff;opacity: .2;filter: alphaopacity=20);padding: 0;cursor: pointer;background: transparent;border: 0;-webkit-appearance: none;}.zl-popup-title {margin: 0;line-height: 24px;font-size: 14px;}.zl-popup-header .close {margin-top: -2px;}.zl-popup-body {position: relative;padding: 8px 20px;}.zl-popup-footer {padding: 6px 20px;text-align: right;border-top: 1px solid #e5e5e5;}.zl-popup-footer .btn + .btn {margin-bottom: 0;margin-left: 5px;}.zl-popup.fade > div {-webkit-transform: translate(0, -25%);-ms-transform: translate(0, -25%);transform: translate(0, -25%);-webkit-transition: -webkittransform 0.3s ease-out;-moz-transition: -moz-transform 0.3s ease-out;-o-transition: -o-transform 0.3s ease-out;transition: transform 0.3s ease-out;}.zl-popup.in > div {-webkit-transform: translate(0, 0);-ms-transform: translate(0, 0);transform: translate(0, 0);}/* city list stylesheet */.list-group {margin-bottom: 20px;padding-left: 0;position: relative;}.list-group-item {position: relative;display: block;padding: 3px 15px;margin-bottom: -1px;background-color: #ffffff;border: 1px solid #dddddd;text-decoration:none;font-size:12px;line-height:24px;}.list-group-item:first-child {border-top-right-radius: 4px;border-top-left-radius: 4px;}.list-group-item:last-child {margin-bottom: 0;border-bottom-right-radius: 4px;border-bottom-left-radius: 4px;}.list-group-item > .badge {float: right;}.list-group-item > .badge + .badge {margin-right: 5px;}a.list-group-item {color: #555555;}a.list-group-item .list-group-item-heading {color: #333333;}a.list-group-item.hover,a.list-group-item:hover {text-decoration: none;background-color: #f5f5f5;}a.list-group-item.active,a.list-group-item.active:hover {z-index: 2;color: #ffffff;background-color: #428bca;border-color: #ffffff;}#Z-cityInterface h3 {background-color: #edf7ff;color: #38599E;padding: 5px 10px;margin:0;}#Z-cityInterface .zl-city-tree {position: relative;padding: 10px 0;overflow-y: scroll;}#Z-cityInterface .zl-city-tree:before,#Z-cityInterface .zl-city-tree:after {content: " ";/* 1 */display: table;/* 2 */}#Z-cityInterface .zl-city-tree:after {clear: both;}#Z-cityInterface .zl-city-tree.zl-city-tree-readonly:before {content: " ";position: absolute;top: 0;left: 0;width: 100%;height: 500px;z-index: 1002;}#Z-cityInterface .zl-city-tree a.list-group-item b {width: 0;height: 0;border-width: 5px 0 5px 6px;border-color: transparent transparent transparent#428bca;border-style: solid;position: absolute;right: 10px;top: 9px;}#Z-cityInterface .zl-city-tree a.list-group-item.active b {border-left-color: #fff;}#Z-cityInterface .zl-city-tree a.list-group-item.hover b,#Z-cityInterface .zl-city-tree a.list-group-item.hover.active b {width: 10px;height: 10px;border: none;background: #2fe2bf;border-radius: 50%;}#Z-cityInterface .zl-city-tree > div {float: left;max-height: 500px;width: 25%;}#Z-cityInterface .zl-city-ctn {padding: 10px 0 0 10px;min-height: 44px;}#Z-cityInterface .zl-city-ctn > span.tag {border-radius: 4px;background: #428bca;color: #ffffff;cursor: pointer;margin: 0 3px 3px 0;overflow: hidden;padding:2px 8px 2px 15px;position: relative;vertical-align: middle;display: inline-block;zoom: 1;-webkit-transition: 0.14s linear;transition: 0.14s linear;}#Z-cityInterface .zl-city-ctn > span.tag > a {color: white;cursor: pointer;font-size: 12px;opacity: 0;padding: 2px 7px 0 0;position: absolute;bottom: 0;right:0;top: 0;text-align: right;text-decoration: none;z-index: 2;display: none\9;}#Z-cityInterface .zl-city-ctn > span.tag:hover {background-color: #3498db;padding-left: 8px;padding-right: 15px;}#Z-cityInterface .zl-city-ctn > span.tag:hover > a {color: white;opacity: 1;}.zl-popup-footer .btn {display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;cursor: pointer;padding: 0 10px;font-size: 12px;line-height: 24px;border: none;outline: none;background: #ccc;color: white;text-decoration: none;-webkit-transition: 0.25s;transition: 0.25s;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;-o-user-select: none;user-select: none;}.zl-popup-footer .btn.btn-info {background-color: #2980b9;}.zl-popup-footer .btn.btn-info:hover,.zl-popup-footer .btn.btn-info:focus {background-color: #3498db;}';
     oStyle = document.createElement('style');
     oStyle.type = "text/css";
@@ -238,7 +238,8 @@ var __hasProp = {}.hasOwnProperty,
           success: null,
           title: '这是一个弹层',
           cancel: false,
-          width: 600
+          width: 600,
+          auto_render: true
         };
         if (json != null) {
           delete json.data;
@@ -260,10 +261,12 @@ var __hasProp = {}.hasOwnProperty,
         iW = this.options.width;
         str = '<div class="zl-popup fade" tabindex="-1"><div class="zl-popup-dialog" style="width: ' + iW + 'px;"><div class="zl-popup-content"><div class="zl-popup-header"><button type="button" class="close Close">&times;</button><h4 class="zl-popup-title">' + tit + '</h4></div><div class="zl-popup-body"></div><div class="zl-popup-footer">' + (this.options.cancel ? '<button type="button" class="btn btn-default Close">取消</button>' : '') + '<button type="button" class="btn btn-info ' + (this.options.cancel ? '' : 'Close') + '">确定</button>' + '</div></div><!-- /.zl-popup-content --></div><!-- /.zl-popup-dialog --></div><!-- /.zl-popup -->';
         oBox = $(str);
-        if (this.template) {
-          oBox.find('.zl-popup-body').html(this.template);
-        } else {
-          this.$el.appendTo(oBox.find('.zl-popup-body'));
+        if (this.options.auto_render) {
+          if (this.template) {
+            oBox.find('.zl-popup-body').html(this.template);
+          } else {
+            this.$el.appendTo(oBox.find('.zl-popup-body'));
+          }
         }
         return oBox.appendTo('body');
       };
@@ -347,169 +350,133 @@ var __hasProp = {}.hasOwnProperty,
       return Popup;
 
     })(View);
-    return CitySelection = (function(_super) {
-      var iTimer, _dataTree, _provinceMap;
+    return CityInterface = (function(_super) {
+      var iTimer, _provinceMap;
 
-      __extends(CitySelection, _super);
-
-      _dataTree = {};
-
-      _provinceMap = {};
+      __extends(CityInterface, _super);
 
       iTimer = null;
 
-      CitySelection.author = 'leozhao';
+      CityInterface.version = '1.3.0';
 
-      CitySelection.version = '1.2.2';
-
-      CitySelection.settings = {
-        style: 'default',
+      CityInterface.settings = {
         success: '数据提交配置；此配置是一个function，将被调用于实例的getData方法内，参数为当前界面的所有选择城市数据',
-        search: '{boolean}是否支持长列表搜索模式，未开放',
-        debug: '{boolean}是否记录log，未开放'
+        search: '{boolean}是否支持长列表搜索模式，未开放'
       };
 
-      CitySelection.create = function(json) {
-        return new CitySelection(json);
+      _provinceMap = {};
+
+      CityInterface.create = function() {
+        return new CityInterface(arguments[0]);
       };
 
-      function CitySelection(json) {
+      function CityInterface(json) {
         if (json && _.isObject(json)) {
-          this.updateConfig(json);
           this.initialize(json);
         } else {
-          console.error("CitySelection需要配置参数才能初始化！");
+          console.error("CityInterface需要配置参数才能初始化！");
         }
       }
 
-      CitySelection.prototype.events = {
+      CityInterface.prototype.events = {
         'click .zl-popup-footer .btn-info': 'success',
-        'click .tag': 'showPaving',
-        'click .zl-cc-del-btn': 'kick',
+        'click .tag': 'rebuild',
+        'click .zl-cc-del-btn': 'discard',
         'click .zl-cc-code': 'codeSelect',
         'click .zl-cc-province': 'provinceSelect',
         'click .zl-cc-level': 'levelSelect',
         'click .zl-cc-country': 'countrySelect',
         'click .zl-cc-city': 'citySelect',
-        'mouseenter .zl-cc-code': function(ev, _this) {
-          iTimer && clearTimeout(iTimer);
-          return iTimer = setTimeout(function() {
-            return _this.codeChange(ev.target);
-          }, 250);
-        },
-        'mouseenter .zl-cc-province': function(ev, _this) {
-          iTimer && clearTimeout(iTimer);
-          return iTimer = setTimeout(function() {
-            return _this.provinceChange(ev.target);
-          }, 250);
-        },
-        'mouseenter .zl-cc-level': function(ev, _this) {
-          iTimer && clearTimeout(iTimer);
-          return iTimer = setTimeout(function() {
-            return _this.levelChange(ev.target);
-          }, 250);
-        },
-        'mouseleave .list-group': function() {
-          return iTimer && clearTimeout(iTimer);
-        }
+        'mouseenter .zl-cc-code': 'delay',
+        'mouseenter .zl-cc-province': 'delay',
+        'mouseenter .zl-cc-level': 'delay',
+        'mouseleave .list-group': 'delay'
       };
 
-      CitySelection.prototype.liMap = {
+      CityInterface.prototype.liMap = {
         'code': function(da, merge) {
-          return '<a href="javascript:;" class="list-group-item zl-cc-code zl-cc-code-' + da.id + (merge && merge[da.id] ? ' active' : '') + '" data-id="' + da.id + '">' + da.name + '<b></b></a>';
+          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-code zl-cc-code-" + da.id + " " + (merge && merge[da.id] ? 'active' : '') + "\" data-id=\"" + da.id + "\">" + da.name + "<b></b></a>";
         },
         'country': function(da, merge) {
-          var dad;
-          dad = da.name || da.ename;
-          return '<a href="javascript:;" class="list-group-item zl-cc-country' + (merge && merge.indexOf(dad) > -1 ? ' active' : '') + '" title="' + da.ename + '">' + dad + '</a>';
+          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-country " + (merge && merge.indexOf(da.addr) > -1 ? 'active' : '') + "\" data-id=\"" + da.addr + "\" title=\"" + da.ename + "\">" + (da.name || da.ename) + "</a>";
         },
         'province': function(da, merge) {
-          return '<a href="javascript:;" class="list-group-item zl-cc-province zl-cc-province-' + da.id + (merge && merge[da.id] ? ' active' : '') + '" data-id="' + da.id + '">' + da.name + '<b></b></a>';
+          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-province zl-cc-province-" + da.id + " " + (merge && merge[da.name] ? 'active' : '') + "\" data-id=\"" + da.id + "\">" + da.name + "<b></b></a>";
         },
         'level': function(da, merge) {
-          return '<a href="javascript:;" class="list-group-item zl-cc-level zl-cc-level-' + da.id + (merge && merge[da.id] ? ' active' : '') + '" data-id="' + da.id + '">' + da.name + '<b></b></a>';
+          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-level zl-cc-level-" + da.id + " " + (merge && merge[da.id] ? 'active' : '') + "\" data-id=\"" + da.id + "\">" + da.name + "<b></b></a>";
         },
         'city': function(da, merge) {
-          return '<a href="javascript:;" class="list-group-item zl-cc-city' + (merge && merge.indexOf(da) > -1 ? ' active' : '') + '" >' + da + '</a>';
+          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-city " + (merge && merge.indexOf(da.addr || da.name) > -1 ? 'active' : '') + "\" data-id=\"" + (da.addr || da.name) + "\">" + da.name + "</a>";
         },
         'search': function(name) {
-          return '<a href="javascript:;"><input type="text" class="list-group-item ' + name + '_search" name="' + name + '_search" style="width:100px;height:22px;border:none;outline:none;margin-left: -5px; padding:0 5px;" placeholder="输入检索字段"></a>';
+          return "<a href=\"javascript:;\"><input type=\"text\" class=\"list-group-item " + name + "_search\" name=\"" + name + "_search\" style=\"width:100px;height:22px;border:none;outline:none;margin-left: -5px; padding:0 5px;\" placeholder=\"输入检索字段\"></a>";
         }
       };
 
-      CitySelection.prototype.initialize = function() {
-        this.nodes = [];
+      CityInterface.prototype.initialize = function() {
+        this.__root__ = CityInterface;
+        this.updateConfig(arguments[0]);
         this.data = {
           province: 0,
           level: 0,
           code: 0
         };
         this.mergeData = {};
-        this.__root__ = CitySelection;
         this.record = [];
-        CitySelection.__super__.initialize.call(this, {
+        CityInterface.__super__.initialize.call(this, {
           title: '城市选择',
-          tmpl: '<h3>已选择区域:</h3><div class="zl-city-ctn"></div><h3>区域选择列表:</h3><div class="zl-city-tree"></div>',
-          cancel: true
+          cancel: true,
+          auto_render: false
         });
-        return this.$el.attr('id', 'Z-cityInterface');
+        return this.$('.zl-popup-body').attr('id', 'Z-cityInterface').html('<h3>已选择区域:</h3><div class="zl-city-ctn"></div><h3>区域选择列表:</h3><div class="zl-city-tree"></div>');
       };
 
-      CitySelection.prototype.updateConfig = function(sup) {
-        var k, _i, _len, _ref;
+      CityInterface.prototype.updateConfig = function(sup) {
         this.config = {};
-        _ref = CitySelection.settings;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          k = _ref[_i];
-          if (sup[k]) {
-            this.config[k] = sup[k];
-          }
-        }
         if (sup.tree) {
-          _dataTree = sup.tree || {};
-          _provinceMap = (function() {
-            var json;
-            json = {};
-            _.each(sup.tree[1]['provinces'], function(v, k) {
-              return json[v.name] = k;
-            });
-            return json;
-          })();
+          this.tree = sup.tree || {};
           return delete sup.tree;
         }
+        return $.getJSON(sup.url || './tree.js', null, (function(_this) {
+          return function(res) {
+            if (!res.no) {
+              return _this.tree = res;
+            }
+          };
+        })(this));
       };
 
-      CitySelection.prototype.initCityList = function(model, bool, fn) {
-        if (_.isBoolean(bool)) {
-          this.readonly = bool;
-          if (fn) {
-            this.config.success = fn;
-          }
-        } else if (_.isFunction(bool)) {
-          this.readonly = false;
-          this.config.success = bool;
-        }
-        if (model) {
-          if (model.length === 0 && this.readonly) {
+      CityInterface.prototype.initCityList = function(json) {
+        this.readonly = json.readonly;
+        this.config.success = json.success;
+        if (json.model) {
+          if (json.model.length === 0 && json.readonly) {
             return true;
           }
-          this.mergeData = this.combine(model);
+          this.mergeData = this.combine(json.model);
         }
-        if (this.readonly) {
+        if (json.readonly) {
           this.$('.zl-city-tree').addClass('zl-city-tree-readonly');
         }
-        this.$('.zl-city-tree').html(this.createDom(_dataTree, this.mergeData));
+        this.$('.zl-city-tree').html(this.createDom(this.tree, this.mergeData));
         this.print().open();
+        this.data = {
+          province: 0,
+          level: 0,
+          code: 0
+        };
         return this;
       };
 
-      CitySelection.prototype.showPaving = function() {
-        var json;
+      CityInterface.prototype.rebuild = function() {
+        var json, that;
+        that = this.oTarget;
         json = {
-          code: this.oTarget.data('c'),
-          province: this.oTarget.data('p'),
-          level: this.oTarget.data('l'),
-          city: this.oTarget.data('ci')
+          code: that.data('c'),
+          province: that.data('p'),
+          level: that.data('l'),
+          city: that.data('ci')
         };
         if (json.code === this.data.code) {
           if (json.code === 1) {
@@ -530,13 +497,14 @@ var __hasProp = {}.hasOwnProperty,
           this.codeChange();
           if (json.code === 1) {
             return this.provinceChange().levelChange().cityChange(json.city);
-          } else if (json.code === 3) {
+          }
+          if (json.code === 3) {
             return this.countryChange(json.city);
           }
         }
       };
 
-      CitySelection.prototype.kick = function(i) {
+      CityInterface.prototype.discard = function() {
         var json, that;
         that = this.oTarget.parent();
         json = {
@@ -544,32 +512,43 @@ var __hasProp = {}.hasOwnProperty,
           province: that.data('p'),
           level: that.data('l')
         };
-        this.updateMergeData(that.data('ci'), json);
+        this.updateMergeData(that.data('ci'), json).paving(json);
         that.remove();
-        this.paving(json);
         if (_.isEmpty(this.mergeData)) {
           return this.$('.zl-city-ctn').html('无已选择地区');
         }
       };
 
-      CitySelection.prototype.success = function() {
-        var keys, out;
-        keys = _dataTree[1]['provinces'];
-        out = this.explode().map(function(m) {
-          if (m.province_name) {
-            m.province_name = keys[m.province_name].name;
-          }
-          return m;
-        });
+      CityInterface.prototype.success = function() {
         if (this.close().config.success) {
-          return this.config.success(out);
+          return this.config.success(this.explode());
         } else {
-          console.log('选择的数据结果：', out);
-          return alert('未设置回调方法，数据已打印在console！');
+          console.log(this.explode());
+          return alert('未设置回调函数，请在console处查看数据！');
         }
       };
 
-      CitySelection.prototype.print = function() {
+      CityInterface.prototype.delay = function() {
+        var cb, tar;
+        this.iTimer && clearTimeout(this.iTimer);
+        tar = this.oTarget;
+        if (tar.is('a')) {
+          if (this.oTarget.hasClass('zl-cc-code')) {
+            cb = this.codeChange.bind(this);
+          } else if (this.oTarget.hasClass('zl-cc-province')) {
+            cb = this.provinceChange.bind(this);
+          } else if (this.oTarget.hasClass('zl-cc-level')) {
+            cb = this.levelChange.bind(this);
+          }
+          if (cb) {
+            return this.iTimer = setTimeout(function() {
+              return cb(tar);
+            }, 250);
+          }
+        }
+      };
+
+      CityInterface.prototype.print = function() {
         var del, str;
         str = '';
         del = this.readonly ? '' : '<a class="zl-cc-del-btn" href="javascript:;">x</a>';
@@ -582,54 +561,49 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CitySelection.prototype.translate = function(json) {
+      CityInterface.prototype.translate = function(json) {
         var str, _json;
         _json = {};
         str = '';
-        if (isNaN(json.province_name)) {
-          json.province_name = _provinceMap[json.province_name];
-        }
         switch (json.large_region_code) {
           case 1:
             _json;
             str = '大陆';
             if (json.province_name) {
-              str = _dataTree[1]['provinces'][json.province_name].name;
+              str = json.province_name;
               if (json.city_level) {
-                str += [0, '一线', '二线', '三线', '四线', '五线'][json.city_level];
+                str += ['v5', '一线', '二线', '三线', '四线', '五线'][json.city_level];
+                if (json.city_name) {
+                  str = json.city_name;
+                }
               }
             }
             break;
           case 2:
             str = '港澳台';
+            if (json.city_name) {
+              str = this.tree[2].citys[json.city_name].name;
+            }
             break;
           case 3:
             str = '海外';
             if (json.country_name) {
-              str = json.country_name;
+              str = this.tree[3].countrys[json.country_name].name;
             }
-        }
-        if (json.city_name) {
-          str = json.city_name;
         }
         return str;
       };
 
-      CitySelection.prototype.combine = function(arr) {
+      CityInterface.prototype.combine = function(data) {
         var json, map;
         json = {};
-        if (arr) {
-          _.each(arr, function(v, k) {
-            if (isNaN(v.province_name)) {
-              return v.province_name = _provinceMap[v.province_name];
-            }
-          });
+        if (data) {
           map = {
             '1': function(c) {
               if (!json['1']) {
                 json['1'] = {};
               }
-              if (c.province_name > 0) {
+              if (c.province_name) {
                 if (!json['1'][c.province_name]) {
                   json['1'][c.province_name] = {};
                 }
@@ -660,7 +634,7 @@ var __hasProp = {}.hasOwnProperty,
               }
             }
           };
-          _.each(arr, function(c) {
+          _.each(data, function(c) {
             return map[c.large_region_code](c);
           });
         } else {
@@ -670,7 +644,7 @@ var __hasProp = {}.hasOwnProperty,
         return json;
       };
 
-      CitySelection.prototype.explode = function() {
+      CityInterface.prototype.explode = function() {
         var add, record, self;
         record = [];
         add = function(c, p, l, ci) {
@@ -679,7 +653,7 @@ var __hasProp = {}.hasOwnProperty,
             "1": function() {
               return {
                 large_region_code: +c,
-                province_name: +p || void 0,
+                province_name: p || void 0,
                 city_level: +l || void 0,
                 city_name: ci || void 0
               };
@@ -728,13 +702,13 @@ var __hasProp = {}.hasOwnProperty,
         return record;
       };
 
-      CitySelection.prototype.codeChange = function(oT) {
+      CityInterface.prototype.codeChange = function(oT) {
         var fn, id;
         if (oT) {
           oT = this.oTarget = $(oT);
           id = +oT.attr('data-id');
           _.extend(this.data, {
-            "province": 0,
+            "province": '',
             "level": 0,
             "code": id
           });
@@ -745,34 +719,34 @@ var __hasProp = {}.hasOwnProperty,
         }
         fn = {
           "1": function() {
-            return this.render(_dataTree[1]['provinces'], this.mergeData[1], 'province');
+            return this.render(this.tree[1]['provinces'], this.mergeData[1], 'province');
           },
           "2": function() {
-            return this.render(_dataTree[2]['citys'], this.mergeData[2], 'city');
+            return this.render(this.tree[2]['citys'], this.mergeData[2], 'city');
           },
           "3": function() {
-            return this.render(_dataTree[3]['countrys'], this.mergeData[3], 'country');
+            return this.render(this.tree[3]['countrys'], this.mergeData[3], 'country');
           }
         }[id];
         if (fn) {
           fn.call(this);
-          this.$('.list-group').eq(1).css('top', this.oTarget.position().top);
+          this.$('.list-group').last().css('top', this.oTarget.position().top);
         }
         return this;
       };
 
-      CitySelection.prototype.provinceChange = function(oT) {
+      CityInterface.prototype.provinceChange = function(oT) {
         var e, iT, id, merge, oP;
         if (oT) {
-          oT = this.oTarget = $(oT);
-          id = +oT.attr('data-id');
+          this.oTarget = $(oT);
+          id = this.oTarget.text();
           _.extend(this.data, {
             "province": id,
             "level": 0
           });
         } else {
           if (id = this.data.province) {
-            this.oTarget = this.$('.zl-cc-province-' + id);
+            this.oTarget = this.$('.zl-cc-province-' + this.tree[1].provinces[id]['id']);
             oP = this.$('.zl-city-tree');
             iT = this.oTarget.position().top + this.oTarget.height() - 10;
             if (iT < oP.scrollTop()) {
@@ -790,7 +764,7 @@ var __hasProp = {}.hasOwnProperty,
               true;
             }
           }
-          this.render(_dataTree[1]['provinces'][id]['levels'], merge, 'level');
+          this.render(this.tree[1]['provinces'][id]['levels'], merge, 'level');
           this.$('.list-group').eq(2).css('top', this.oTarget.position().top);
         } catch (_error) {
           e = _error;
@@ -799,7 +773,7 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CitySelection.prototype.levelChange = function(oT) {
+      CityInterface.prototype.levelChange = function(oT) {
         var e, id, merge;
         if (oT) {
           oT = this.oTarget = $(oT);
@@ -819,8 +793,9 @@ var __hasProp = {}.hasOwnProperty,
               }
             }
           }
-          this.render(_dataTree[1]['provinces'][this.data.province]['levels'][id]['citys'], merge, 'city');
+          this.render(this.tree[1]['provinces'][this.data.province]['levels'][id]['citys'], merge, 'city');
           this.$('.list-group').eq(3).css('top', this.oTarget.position().top + 1 * this.$('.list-group').eq(2).css('top').slice(0, -2));
+          delete this.oTarget;
         } catch (_error) {
           e = _error;
           console.log(e);
@@ -828,44 +803,43 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CitySelection.prototype.cityChange = function(name) {
+      CityInterface.prototype.cityChange = function(name) {
         var iH, oLast, oTree;
         oLast = this.$('.list-group').last();
         iH = +oLast.css('top').slice(0, -2);
         oTree = this.$('.zl-city-tree');
         return oLast.find('.active').each(function() {
-          if ($(this).html() === name) {
-            iH = $(this).position().top + $(this).outerHeight() + iH - 510;
-            return oTree.scrollTop(iH < 0 ? 0 : iH);
+          if ($(this).attr('data-id') === name) {
+            return oTree.scrollTop($(this).position().top + $(this).outerHeight() + iH - 510);
           }
         });
       };
 
-      CitySelection.prototype.countryChange = function(name) {
+      CityInterface.prototype.countryChange = function(name) {
         return this.cityChange(name);
       };
 
-      CitySelection.prototype.codeSelect = function() {
+      CityInterface.prototype.codeSelect = function() {
         return this.updateMergeData().paving().print();
       };
 
-      CitySelection.prototype.provinceSelect = function() {
+      CityInterface.prototype.provinceSelect = function() {
         return this.updateMergeData().paving().print();
       };
 
-      CitySelection.prototype.levelSelect = function() {
+      CityInterface.prototype.levelSelect = function() {
         return this.updateMergeData().paving().print();
       };
 
-      CitySelection.prototype.countrySelect = function() {
-        return this.updateMergeData(this.oTarget.text()).paving().print();
+      CityInterface.prototype.countrySelect = function() {
+        return this.updateMergeData(this.oTarget.attr('data-id')).paving().print();
       };
 
-      CitySelection.prototype.citySelect = function() {
-        return this.updateMergeData(this.oTarget.text()).paving().print();
+      CityInterface.prototype.citySelect = function() {
+        return this.updateMergeData(this.oTarget.attr('data-id')).paving().print();
       };
 
-      CitySelection.prototype.updateMergeData = function(val, json) {
+      CityInterface.prototype.updateMergeData = function(val, json) {
         var fn, merge, path;
         path = json || this.data;
         merge = this.mergeData;
@@ -985,7 +959,7 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CitySelection.prototype.paving = function() {
+      CityInterface.prototype.paving = function() {
         var merge, path, rpath;
         merge = this.mergeData;
         rpath = this.data;
@@ -1001,9 +975,9 @@ var __hasProp = {}.hasOwnProperty,
               this.$('.zl-cc-province, .zl-cc-level, .zl-cc-city').removeClass('active');
             } else {
               if (merge = merge[path.province]) {
-                this.$('.zl-cc-province-' + path.province).addClass('active');
+                this.$('.zl-cc-province-' + this.tree[1].provinces[path.province].id).addClass('active');
               } else {
-                this.$('.zl-cc-province-' + path.province).removeClass('active');
+                this.$('.zl-cc-province-' + this.tree[1].provinces[path.province].id).removeClass('active');
               }
               if (path.province === rpath.province) {
                 if (_.isEmpty(merge)) {
@@ -1019,7 +993,7 @@ var __hasProp = {}.hasOwnProperty,
                       this.$('.zl-cc-city').removeClass('active');
                     } else {
                       this.$('.zl-cc-city').each(function() {
-                        if (merge.indexOf($(this).text()) === -1) {
+                        if (merge.indexOf($(this).attr('data-id')) === -1) {
                           return $(this).removeClass('active');
                         } else {
                           return $(this).addClass('active');
@@ -1035,7 +1009,7 @@ var __hasProp = {}.hasOwnProperty,
               this.$('.zl-cc-city').removeClass('active');
             } else {
               this.$('.zl-cc-city').each(function() {
-                if (merge.indexOf($(this).text()) === -1) {
+                if (merge.indexOf($(this).attr('data-id')) === -1) {
                   return $(this).removeClass('active');
                 } else {
                   return $(this).addClass('active');
@@ -1047,7 +1021,7 @@ var __hasProp = {}.hasOwnProperty,
               this.$('.zl-cc-country').removeClass('active');
             } else {
               this.$('.zl-cc-country').each(function() {
-                if (merge.indexOf($(this).text()) === -1) {
+                if (merge.indexOf($(this).attr('data-id')) === -1) {
                   return $(this).removeClass('active');
                 } else {
                   return $(this).addClass('active');
@@ -1059,7 +1033,7 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CitySelection.prototype.render = function(data, name) {
+      CityInterface.prototype.render = function(data, name) {
         var o, obj;
         this.oTarget.addClass('hover').siblings().removeClass('hover');
         obj = this.oTarget.parent();
@@ -1074,7 +1048,7 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CitySelection.prototype.createDom = function(data, merData, name) {
+      CityInterface.prototype.createDom = function(data, merData, name) {
         var liMap, str, type;
         str = '<div class="list-group">';
         type = '';
@@ -1091,23 +1065,7 @@ var __hasProp = {}.hasOwnProperty,
         return str += '</div>';
       };
 
-      CitySelection.prototype.filterData = function(arr, kw) {
-        var d, _arr, _i, _len;
-        if (kw) {
-          _arr = [];
-          for (_i = 0, _len = arr.length; _i < _len; _i++) {
-            d = arr[_i];
-            if (d.pinyin.indexOf(kw) > -1 || d.letter.indexOf(kw) > -1) {
-              _arr.push(d);
-            }
-          }
-          return _arr;
-        } else {
-          return arr;
-        }
-      };
-
-      return CitySelection;
+      return CityInterface;
 
     })(Popup);
   });

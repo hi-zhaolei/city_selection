@@ -149,6 +149,7 @@
           title : '这是一个弹层'      # {string}     对话框标题
           cancel : no            # {boolean}      关闭按钮是否显示，如不显示，确认按钮默认为关闭对话框
           width : 600               # {对话框宽度}    默认600
+          auto_render : yes    #是否自动化渲染
         if json?
           delete json.data
           _.extend defaults, json
@@ -162,10 +163,11 @@
         iW = @options.width
         str = '<div class="zl-popup fade" tabindex="-1"><div class="zl-popup-dialog" style="width: ' + iW + 'px;"><div class="zl-popup-content"><div class="zl-popup-header"><button type="button" class="close Close">&times;</button><h4 class="zl-popup-title">' + tit + '</h4></div><div class="zl-popup-body"></div><div class="zl-popup-footer">' + (if @options.cancel then '<button type="button" class="btn btn-default Close">取消</button>' else '') + '<button type="button" class="btn btn-info ' + (if @options.cancel then '' else 'Close') + '">确定</button>' + '</div></div><!-- /.zl-popup-content --></div><!-- /.zl-popup-dialog --></div><!-- /.zl-popup -->'
         oBox = $(str)
-        if @template
-          oBox.find('.zl-popup-body').html @template
-        else
-          @$el.appendTo oBox.find('.zl-popup-body')
+        if @options.auto_render
+          if @template
+            oBox.find('.zl-popup-body').html @template
+          else
+            @$el.appendTo oBox.find('.zl-popup-body')
         oBox.appendTo 'body'
       open : ->
         data = @data or @model.data
@@ -224,146 +226,121 @@
           top : iY
       mouseUp : -> $(document).off('mousemove').off('mouseup')
     # 城市位置浮层 继承于Popup
-    class CitySelection extends Popup
-      # 数据树
-      _dataTree = {}
-      # 省份映射
-      _provinceMap = {}
-      # 延迟器存储
+    class CityInterface extends Popup
       iTimer = null
-      # 
-      @author = 'leozhao'
       # 版本记录
-      @version = '1.2.2'
-      # 本地config可配置项信息，updateConfig调用，请勿修改
+      @version = '1.3.0'
+      # # 本地config可配置项信息，updateConfig调用，请勿修改
       @settings =
-        # url : 'ajax请求地址，请求参数会以get传递，支持restful接口模式，eg:/city/:id'
-        style : 'default'
         success : '数据提交配置；此配置是一个function，将被调用于实例的getData方法内，参数为当前界面的所有选择城市数据'
         search : '{boolean}是否支持长列表搜索模式，未开放'
-        debug : '{boolean}是否记录log，未开放'
-      # 用户操作记录，请勿修改（暂剔除）
-      # @vlog = [] 
-      @create = (json)-> new CitySelection json
+      _provinceMap = {}
+      @create = -> new CityInterface arguments[0]
       # 构造函数
       constructor: (json)->
         if json and _.isObject json
-          # 更新本地配置
-          @updateConfig json
           # 进行初始化
           @initialize json
         else
-          console.error "CitySelection需要配置参数才能初始化！"
+          console.error "CityInterface需要配置参数才能初始化！"
       # 浮层事件hash
       events: 
         'click .zl-popup-footer .btn-info' : 'success'
-        'click .tag' : 'showPaving'
-        'click .zl-cc-del-btn' : 'kick'
+        'click .tag' : 'rebuild'
+        'click .zl-cc-del-btn' : 'discard'
         'click .zl-cc-code': 'codeSelect'
         'click .zl-cc-province': 'provinceSelect'
         'click .zl-cc-level': 'levelSelect'
         'click .zl-cc-country': 'countrySelect'
         'click .zl-cc-city': 'citySelect'
-        'mouseenter .zl-cc-code' : (ev, _this) ->
-          iTimer and clearTimeout iTimer
-          iTimer = setTimeout(
-            -> _this.codeChange ev.target
-            250)
-        'mouseenter .zl-cc-province' : (ev, _this) ->
-          iTimer and clearTimeout iTimer
-          iTimer = setTimeout(
-            -> _this.provinceChange ev.target
-            250)
-        'mouseenter .zl-cc-level' : (ev, _this) ->
-          iTimer and clearTimeout iTimer
-          iTimer = setTimeout(
-            -> _this.levelChange ev.target
-            250)
-        'mouseleave .list-group' : -> iTimer and clearTimeout iTimer
+        'mouseenter .zl-cc-code' : 'delay'
+        'mouseenter .zl-cc-province' : 'delay'
+        'mouseenter .zl-cc-level' : 'delay'
+        'mouseleave .list-group' : 'delay'
         # 'keyup .province_search': 'provinceSearch'
       # 列表模版映射
       # 已完成 !search待定
       liMap:
         'code': (da, merge) ->
-          '<a href="javascript:;" class="list-group-item zl-cc-code zl-cc-code-' + da.id + ( if merge and merge[da.id] then ' active' else '' ) + '" data-id="' + da.id + '">' + da.name + '<b></b></a>' 
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-code zl-cc-code-#{da.id} #{if merge and merge[da.id] then 'active' else ''}\" data-id=\"#{da.id}\">#{da.name}<b></b></a>" 
         'country': (da, merge) ->
-          dad = da.name or da.ename
-          '<a href="javascript:;" class="list-group-item zl-cc-country' + ( if merge and merge.indexOf(dad) > -1 then ' active' else '' ) + '" title="' + da.ename + '">' + dad + '</a>'
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-country #{if merge and merge.indexOf(da.addr) > -1 then 'active' else '' }\" data-id=\"#{da.addr}\" title=\"#{da.ename}\">#{da.name or da.ename}</a>"
         'province': (da, merge) ->
-          '<a href="javascript:;" class="list-group-item zl-cc-province zl-cc-province-' + da.id + ( if merge and merge[da.id] then ' active' else '' ) + '" data-id="' + da.id + '">' + da.name + '<b></b></a>'
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-province zl-cc-province-#{da.id} #{if merge and merge[da.name] then 'active' else ''}\" data-id=\"#{da.id}\">#{da.name}<b></b></a>"
         'level': (da, merge) ->
-          '<a href="javascript:;" class="list-group-item zl-cc-level zl-cc-level-' + da.id + ( if merge and merge[da.id] then ' active' else '' ) + '" data-id="' + da.id + '">' + da.name + '<b></b></a>'
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-level zl-cc-level-#{da.id} #{if merge and merge[da.id] then 'active' else '' }\" data-id=\"#{da.id}\">#{da.name}<b></b></a>"
         'city': (da, merge) ->
-          '<a href="javascript:;" class="list-group-item zl-cc-city' + ( if merge and merge.indexOf(da) > -1 then ' active' else '' ) + '" >' + da + '</a>'
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-city #{if merge and merge.indexOf(da.addr or da.name) > -1 then 'active' else '' }\" data-id=\"#{da.addr or da.name}\">#{da.name}</a>"
         'search': (name) ->
-          '<a href="javascript:;"><input type="text" class="list-group-item ' + name + '_search" name="' + name + '_search" style="width:100px;height:22px;border:none;outline:none;margin-left: -5px; padding:0 5px;" placeholder="输入检索字段"></a>'
+          "<a href=\"javascript:;\"><input type=\"text\" class=\"list-group-item #{name}_search\" name=\"#{name}_search\" style=\"width:100px;height:22px;border:none;outline:none;margin-left: -5px; padding:0 5px;\" placeholder=\"输入检索字段\"></a>"
       # 初始化函数
-      initialize: () ->
-        # attribute
-        @nodes = []
+      initialize: ->
+        # attributes
+        @__root__ = CityInterface
+        # 更新本地配置
+        @updateConfig arguments[0]
         @data = 
           province: 0
           level: 0
           code: 0
         @mergeData = {}
-        @__root__ = CitySelection
         @record = []
-        # 
+        # 初始化浮层 
         super {
           title : '城市选择'
-          tmpl : '<h3>已选择区域:</h3><div class="zl-city-ctn"></div><h3>区域选择列表:</h3><div class="zl-city-tree"></div>'
           cancel : yes
+          auto_render : no
         }
-        @$el.attr 'id', 'Z-cityInterface'
-        # @list = new CityTree @$ '.zl-city-tree'
+        @$ '.zl-popup-body'
+          .attr 'id', 'Z-cityInterface'
+            .html '<h3>已选择区域:</h3><div class="zl-city-ctn"></div><h3>区域选择列表:</h3><div class="zl-city-tree"></div>'
       # 更新本地config配置
       updateConfig : (sup) ->
         @config = {}
         # 更新本地config
-        for k in CitySelection.settings
-          if sup[k]
-            @config[k] = sup[k]
-        # 存储
+        # for k in @__root__.settings
+        #   if sup[k]
+        #     @config[k] = sup[k]
+        # 存储数据
         if sup.tree
-          _dataTree = sup.tree or {}
-          # 省份映射
-          _provinceMap = do ->
-            json = {}
-            _.each sup.tree[1]['provinces'], (v,k) -> json[v.name] = k
-            json
-          delete sup.tree
+          @tree = sup.tree or {}
+          return delete sup.tree
+        # if sup.url and _.isString sup.url
+        $.getJSON sup.url or './tree.js', null, (res) => @tree = res unless res.no
       # 
       # 初始化列表
       # 
-      initCityList : (model, bool, fn) ->
+      initCityList : (json) ->
         # 只读属性处理
-        if _.isBoolean bool
-          @readonly = bool
-          if fn 
-            @config.success = fn
-        else if _.isFunction bool
-          @readonly = no
-          @config.success = bool
+        @readonly = json.readonly
+        @config.success = json.success
         # 数据处理
-        if model
-          if model.length is 0 and @readonly
+        if json.model
+          if json.model.length is 0 and json.readonly
             # 数据为空并且为只读状态
             return yes
-          @mergeData = @combine model
-        if @readonly
+          @mergeData = @combine json.model
+        if json.readonly
           @$('.zl-city-tree').addClass 'zl-city-tree-readonly'
-        @$('.zl-city-tree').html @createDom _dataTree, @mergeData
+        @$('.zl-city-tree').html @createDom @tree, @mergeData
+        # 
         @print().open()
+        # 数据滞空
+        @data = 
+          province: 0
+          level: 0
+          code: 0
         @
-      # 展示点击数据路径
       # 
-      showPaving : ->
-        # 读取数据
+      # 重建城市路径
+      # 
+      rebuild : ->
+        that = @oTarget
         json =  
-          code : @oTarget.data 'c'
-          province : @oTarget.data 'p'
-          level : @oTarget.data 'l'
-          city : @oTarget.data 'ci'
+          code : that.data 'c'
+          province : that.data 'p'
+          level : that.data 'l'
+          city : that.data 'ci'
         # render logic
         if json.code is @data.code
           # code相同，不重新渲染
@@ -385,33 +362,49 @@
           @codeChange()
           if json.code is 1
             # code不同，重新渲染
-            @provinceChange().levelChange().cityChange json.city
-          else if json.code is 3
-            @countryChange json.city
-      # 删除已配置城市数据
-      kick: (i)->
+            return @provinceChange().levelChange().cityChange json.city
+          if json.code is 3
+            return @countryChange json.city
+      # 
+      # 丢弃城市数据
+      # 
+      discard: ->
         that = @oTarget.parent()
         json =  
           code : that.data 'c'
           province : that.data 'p'
           level : that.data 'l'
-        @updateMergeData that.data( 'ci' ), json
+        @updateMergeData( that.data( 'ci' ), json ).paving json
         that.remove()
         # console.log @mergeData
-        @paving json
         if _.isEmpty @mergeData
           @$( '.zl-city-ctn' ).html '无已选择地区'
+      # 
       # 确认按钮事件
+      # 
       success : ->
-        keys = _dataTree[1]['provinces']
-        out = @explode().map (m) ->
-          m.province_name = keys[m.province_name].name if m.province_name
-          m
         if @close().config.success
-          @config.success out
+          @config.success @explode()
         else
-          console.log '选择的数据结果：', out
-          alert '未设置回调方法，数据已打印在console！'
+          console.log @explode()
+          alert '未设置回调函数，请在console处查看数据！'
+      # 
+      # 延迟事件
+      # 
+      delay : ->
+        @iTimer and clearTimeout @iTimer
+        tar = @oTarget
+        if tar.is 'a'
+          if @oTarget.hasClass 'zl-cc-code'
+            cb = @codeChange.bind @
+          else if @oTarget.hasClass 'zl-cc-province'
+            cb = @provinceChange.bind @
+          else if @oTarget.hasClass 'zl-cc-level'
+            cb = @levelChange.bind @
+          if cb
+            @iTimer = setTimeout(
+              -> cb tar
+              250)
       # 
       # 打印city tree 数据
       # 
@@ -422,57 +415,58 @@
           str += '<span class="tag" data-c="' + c.large_region_code + '" data-p="' + ( c.province_name or 0 ) + '" data-l="' + ( c.city_level or 0 ) + '" data-ci="' + ( c.city_name or c.country_name or '' ) + '"><span>' + @translate( c ) + '&nbsp;&nbsp;</span>' + del + '</span>'
         @$( '.zl-city-ctn' ).html str or '无已选择地区'
         @
-      # 翻译数据－》可读文本
+      #
+      #  翻译数据－》可读文本
+      #  
       translate: (json)->
         _json = {}
         str = ''
-        # 修正省份数据
-        json.province_name = _provinceMap[json.province_name] if isNaN json.province_name
         switch json.large_region_code
           when 1
             _json 
             str = '大陆'
             if json.province_name
-              str = _dataTree[1]['provinces'][json.province_name].name
+              str = json.province_name
               if json.city_level
-                str += [ 0, '一线', '二线', '三线', '四线', '五线' ][ json.city_level ]
-          when 2 then str = '港澳台'
+                str += [ 'v5', '一线', '二线', '三线', '四线', '五线' ][ json.city_level ]
+                if json.city_name
+                  str = json.city_name
+          when 2
+            str = '港澳台'
+            if json.city_name
+              str = @tree[2].citys[json.city_name].name
           when 3
             str = '海外'
             if json.country_name
-              str = json.country_name
-        if json.city_name
-          str = json.city_name
+              str = @tree[3].countrys[json.country_name].name
         str
+      # 
       # 外部数据合并, { 云引擎专用 } 其他项目根据需要覆盖此函数！！！！
-      combine : (arr)->
+      # 
+      combine : (data)->
         json = {}
-        if arr
-          _.each arr, (v,k) ->
-            v.province_name = _provinceMap[v.province_name] if isNaN v.province_name
+        if data
+          # 修正省份数据
+          # _.each data, (v,k) -> v.province_name = _provinceMap[v.province_name]
           map = 
             '1' : (c) ->
-              if not json['1']
+              unless json['1']
                 json['1'] = {}
-              if c.province_name > 0
-                if not json['1'][ c.province_name ]
+              if c.province_name
+                unless json['1'][ c.province_name ]
                   json['1'][ c.province_name ] = {}
                 if c.city_level > 0
-                  if not json['1'][ c.province_name ][ c.city_level ]
+                  unless json['1'][ c.province_name ][ c.city_level ]
                     json['1'][ c.province_name ][ c.city_level ] = []
                   if c.city_name
                     json['1'][ c.province_name ][ c.city_level ].push c.city_name
             '2' : (c) ->
-              if not json['2']
-                json['2'] = []
-              if c.city_name
-                json['2'].push c.city_name
+              json['2'] = [] unless json['2']
+              json['2'].push c.city_name if c.city_name
             '3' : (c) ->
-              if not json['3']
-                json['3'] = []
-              if c.country_name
-                json['3'].push c.country_name
-          _.each arr, (c) -> map[ c.large_region_code ]( c )
+              json['3'] = [] unless json['3']
+              json['3'].push c.country_name if c.country_name
+          _.each data, (c) -> map[ c.large_region_code ]( c )
         else
           console.error 'combine方法出现错误: 参数不能为空'
           console.trace()
@@ -484,7 +478,7 @@
           map = 
             "1" : ->
               large_region_code : +c
-              province_name : +p or undefined
+              province_name : p or undefined
               city_level : +l or undefined
               city_name : ci or undefined
             "2" : ->
@@ -493,8 +487,7 @@
             "3" : ->
               large_region_code : +c
               country_name : p or undefined
-          if c
-            record.push map[ c ]()
+          record.push map[ c ]() if c
         slice = Array::slice
         ( self = ( data ) ->
           args = slice.call arguments, 1
@@ -520,29 +513,29 @@
           # if oT[0].className is 'B'
           id = +oT.attr 'data-id'
           # reset model data
-          _.extend @data, { "province": 0, "level": 0, "code": id }
+          _.extend @data, { "province": '', "level": 0, "code": id }
         else
           if id = @data.code
             @oTarget = @$('.zl-cc-code').eq id - 1
         fn = ({
-          "1": -> @render _dataTree[1]['provinces'], @mergeData[1], 'province'
-          "2": -> @render _dataTree[2]['citys'], @mergeData[2], 'city'
-          "3": -> @render _dataTree[3]['countrys'], @mergeData[3], 'country'
+          "1": -> @render @tree[1]['provinces'], @mergeData[1], 'province'
+          "2": -> @render @tree[2]['citys'], @mergeData[2], 'city'
+          "3": -> @render @tree[3]['countrys'], @mergeData[3], 'country'
           })[id]
         # console.log fn
         if fn
           fn.call @
-          @$('.list-group').eq(1).css 'top', @oTarget.position().top
+          @$('.list-group').last().css 'top', @oTarget.position().top
         @
       # 切换省逻辑
       provinceChange: (oT)->
         if oT
-          oT = @oTarget = $ oT
-          id = +oT.attr 'data-id'
+          @oTarget = $ oT
+          id = @oTarget.text()
           _.extend @data, { "province": id, "level": 0 }
         else
           if id = @data.province
-            @oTarget = @$ '.zl-cc-province-' + id
+            @oTarget = @$ '.zl-cc-province-' + @tree[1].provinces[id]['id']
             oP = @$ '.zl-city-tree'
             iT = @oTarget.position().top + @oTarget.height() - 10
             if iT < oP.scrollTop()
@@ -555,7 +548,7 @@
           if merge = @mergeData[1]
             if merge = merge[id]
               yes
-          @render _dataTree[1]['provinces'][id]['levels'], merge, 'level'
+          @render @tree[1]['provinces'][id]['levels'], merge, 'level'
           @$('.list-group').eq(2).css 'top', @oTarget.position().top
         catch e
           console.log e
@@ -579,21 +572,22 @@
               if merge = merge[id]
                 yes
                 # console.log @data
-          @render _dataTree[1]['provinces'][@data.province]['levels'][id]['citys'], merge, 'city'
+          @render @tree[1]['provinces'][@data.province]['levels'][id]['citys'], merge, 'city'
           @$('.list-group').eq(3).css 'top', @oTarget.position().top + 1 * @$('.list-group').eq(2).css('top').slice 0, -2
+          # 删除对象存储
+          delete @oTarget
         catch e
           console.log e
         @
-      # 国家/城市联动
+      # 城市联动
       cityChange : (name)->
         oLast = @$('.list-group').last()
         iH = +oLast.css('top').slice 0, -2
         oTree = @$ '.zl-city-tree'
-        oLast.find( '.active' ).each ->
-          if $(@).html() is name
-            iH = $(@).position().top + $(@).outerHeight() + iH - 510
-            oTree.scrollTop if iH < 0 then 0 else iH
+        oLast.find( '.active' ).each -> oTree.scrollTop( $(@).position().top + $(@).outerHeight() + iH - 510 ) if $(@).attr('data-id') is name
+      # 
       # 国家联动
+      # 
       countryChange : (name) -> @cityChange name
       # code区域确认选择
       codeSelect : -> @updateMergeData().paving().print()
@@ -602,9 +596,9 @@
       # 级别确认选择
       levelSelect: -> @updateMergeData().paving().print()
       # 国家确认选择
-      countrySelect: -> @updateMergeData( @oTarget.text() ).paving().print()
+      countrySelect: -> @updateMergeData( @oTarget.attr('data-id') ).paving().print()
       # 城市确认选择
-      citySelect: -> @updateMergeData( @oTarget.text() ).paving().print()
+      citySelect: -> @updateMergeData( @oTarget.attr('data-id') ).paving().print()
       # 更新数据记录
       updateMergeData : (val, json)->
         path = json or @data
@@ -700,7 +694,9 @@
         })[path.code]
         fn and fn path.province, path.level
         @
-      # 联动路径显示
+      # 
+      # 铺设路径
+      # 
       paving : ->
         # 用户选择数据记录
         merge = @mergeData
@@ -720,9 +716,9 @@
               @$( '.zl-cc-province, .zl-cc-level, .zl-cc-city' ).removeClass 'active'
             else
               if merge = merge[path.province]
-                @$( '.zl-cc-province-' + path.province ).addClass 'active'
+                @$( '.zl-cc-province-' + @tree[1].provinces[path.province].id ).addClass 'active'
               else
-                @$( '.zl-cc-province-' + path.province ).removeClass 'active'
+                @$( '.zl-cc-province-' + @tree[1].provinces[path.province].id ).removeClass 'active'
               # level logic
               if path.province is rpath.province
                 if _.isEmpty merge
@@ -738,7 +734,7 @@
                       @$( '.zl-cc-city' ).removeClass 'active'
                     else
                       @$( '.zl-cc-city' ).each ->
-                        if merge.indexOf( $(@).text() ) is -1
+                        if merge.indexOf( $(@).attr('data-id') ) is -1
                           $(@).removeClass 'active'
                         else
                           $(@).addClass 'active'
@@ -748,7 +744,7 @@
               @$( '.zl-cc-city' ).removeClass 'active'
             else
               @$( '.zl-cc-city' ).each ->
-                if merge.indexOf( $(@).text() ) is -1
+                if merge.indexOf( $(@).attr('data-id') ) is -1
                   $(@).removeClass 'active'
                 else
                   $(@).addClass 'active'
@@ -758,25 +754,29 @@
               @$( '.zl-cc-country' ).removeClass 'active'
             else
               @$( '.zl-cc-country' ).each ->
-                if merge.indexOf( $(@).text() ) is -1
+                if merge.indexOf( $(@).attr('data-id') ) is -1
                   $(@).removeClass 'active'
                 else
                   $(@).addClass 'active'
         @
+      # 
       # 渲染页面
+      # 
       render: (data, name)->
-        @oTarget.addClass 'hover'
-          .siblings().removeClass 'hover'
+        @oTarget.addClass('hover').siblings().removeClass 'hover'
         # 移除dom
         obj = @oTarget.parent()
-        while obj.next().length
+        while  obj.next().length
           obj.next().remove()
         # dom添加
         o = $ @createDom data, name
-        o.css 'width', 'auto' if o.find( '.zl-cc-country' ).length
+        if o.find( '.zl-cc-country' ).length
+          o.css 'width', 'auto'
         o.insertAfter obj
         @
-      # 创建dom
+      # 
+      # 创建
+      # 
       createDom: ( data, merData, name ) ->
         str = '<div class="list-group">'
         type = ''
@@ -787,18 +787,10 @@
         # 遍历数据整合dom
         _.each data, (da) =>
           fn = liMap[ da.type or 'city' ]
-          str += fn.call @, da, merData if _.isFunction fn
+          if _.isFunction fn
+            str += fn.call @, da, merData
+        # console.log @model
         str += '</div>'
-      # 数据过滤
-      filterData: (arr,kw)->
-        if kw
-          _arr = []
-          for d in arr
-            if d.pinyin.indexOf( kw ) > -1 or d.letter.indexOf( kw ) > -1
-              _arr.push d
-          _arr
-        else
-          arr
 )( (fn) ->
   if typeof CitySelection isnt 'undefined' and CitySelection.author is 'leozhao'
     console.error 'CitySelection已经存在，请勿重复引入！'
