@@ -110,11 +110,11 @@
       }
     }
     console.log('Data processing is completed!');
-    return fs.writeFile('./citytree.js', JSON.stringify(tree), function(err) {
+    return fs.writeFile('./citys.js', JSON.stringify(tree), function(err) {
       if (err) {
         throw err;
       }
-      return console.log("citytree.js is created!");
+      return console.log("citys.js is created!");
     });
   });
 

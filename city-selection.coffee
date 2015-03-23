@@ -244,7 +244,7 @@
         else
           console.error "CityInterface需要配置参数才能初始化！"
       # 浮层事件hash
-      events: 
+      events:
         'click .zl-popup-footer .btn-info' : 'success'
         'click .tag' : 'rebuild'
         'click .zl-cc-del-btn' : 'discard'
@@ -262,7 +262,7 @@
       # 已完成 !search待定
       liMap:
         'code': (da, merge) ->
-          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-code zl-cc-code-#{da.id} #{if merge and merge[da.id] then 'active' else ''}\" data-id=\"#{da.id}\">#{da.name}<b></b></a>" 
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-code zl-cc-code-#{da.id} #{if merge and merge[da.id] then 'active' else ''}\" data-id=\"#{da.id}\">#{da.name}<b></b></a>"
         'country': (da, merge) ->
           "<a href=\"javascript:;\" class=\"list-group-item zl-cc-country #{if merge and merge.indexOf(da.addr) > -1 then 'active' else '' }\" data-id=\"#{da.addr}\" title=\"#{da.ename}\">#{da.name or da.ename}</a>"
         'province': (da, merge) ->
@@ -279,13 +279,13 @@
         @__root__ = CityInterface
         # 更新本地配置
         @updateConfig arguments[0]
-        @data = 
+        @data =
           province: 0
           level: 0
           code: 0
         @mergeData = {}
         @record = []
-        # 初始化浮层 
+        # 初始化浮层
         super {
           title : '城市选择'
           cancel : yes
@@ -306,10 +306,10 @@
           @tree = sup.tree or {}
           return delete sup.tree
         # if sup.url and _.isString sup.url
-        $.getJSON sup.url or './tree.js', null, (res) => @tree = res unless res.no
-      # 
+        $.getJSON sup.url or './citys.js', null, (res) => @tree = res unless res.no
+      #
       # 初始化列表
-      # 
+      #
       initCityList : (json) ->
         # 只读属性处理
         @readonly = json.readonly
@@ -323,20 +323,20 @@
         if json.readonly
           @$('.zl-city-tree').addClass 'zl-city-tree-readonly'
         @$('.zl-city-tree').html @createDom @tree, @mergeData
-        # 
+        #
         @print().open()
         # 数据滞空
-        @data = 
+        @data =
           province: 0
           level: 0
           code: 0
         @
-      # 
+      #
       # 重建城市路径
-      # 
+      #
       rebuild : ->
         that = @oTarget
-        json =  
+        json =
           code : that.data 'c'
           province : that.data 'p'
           level : that.data 'l'
@@ -365,12 +365,12 @@
             return @provinceChange().levelChange().cityChange json.city
           if json.code is 3
             return @countryChange json.city
-      # 
+      #
       # 丢弃城市数据
-      # 
+      #
       discard: ->
         that = @oTarget.parent()
-        json =  
+        json =
           code : that.data 'c'
           province : that.data 'p'
           level : that.data 'l'
@@ -379,18 +379,18 @@
         # console.log @mergeData
         if _.isEmpty @mergeData
           @$( '.zl-city-ctn' ).html '无已选择地区'
-      # 
+      #
       # 确认按钮事件
-      # 
+      #
       success : ->
         if @close().config.success
           @config.success @explode()
         else
           console.log @explode()
           alert '未设置回调函数，请在console处查看数据！'
-      # 
+      #
       # 延迟事件
-      # 
+      #
       delay : ->
         @iTimer and clearTimeout @iTimer
         tar = @oTarget
@@ -405,9 +405,9 @@
             @iTimer = setTimeout(
               -> cb tar
               250)
-      # 
+      #
       # 打印city tree 数据
-      # 
+      #
       print : ->
         str = ''
         del = if @readonly then '' else '<a class="zl-cc-del-btn" href="javascript:;">x</a>'
@@ -417,13 +417,13 @@
         @
       #
       #  翻译数据－》可读文本
-      #  
+      #
       translate: (json)->
         _json = {}
         str = ''
         switch json.large_region_code
           when 1
-            _json 
+            _json
             str = '大陆'
             if json.province_name
               str = json.province_name
@@ -440,15 +440,15 @@
             if json.country_name
               str = @tree[3].countrys[json.country_name].name
         str
-      # 
+      #
       # 外部数据合并, { 云引擎专用 } 其他项目根据需要覆盖此函数！！！！
-      # 
+      #
       combine : (data)->
         json = {}
         if data
           # 修正省份数据
           # _.each data, (v,k) -> v.province_name = _provinceMap[v.province_name]
-          map = 
+          map =
             '1' : (c) ->
               unless json['1']
                 json['1'] = {}
@@ -475,7 +475,7 @@
       explode: ->
         record = []
         add = ( c, p, l, ci ) ->
-          map = 
+          map =
             "1" : ->
               large_region_code : +c
               province_name : p or undefined
@@ -585,9 +585,9 @@
         iH = +oLast.css('top').slice 0, -2
         oTree = @$ '.zl-city-tree'
         oLast.find( '.active' ).each -> oTree.scrollTop( $(@).position().top + $(@).outerHeight() + iH - 510 ) if $(@).attr('data-id') is name
-      # 
+      #
       # 国家联动
-      # 
+      #
       countryChange : (name) -> @cityChange name
       # code区域确认选择
       codeSelect : -> @updateMergeData().paving().print()
@@ -688,15 +688,15 @@
             else
               # code data togggle
               if merge[3] and _.isEmpty merge[3]
-                delete merge[3]  
+                delete merge[3]
               else
                 merge[3] = []
         })[path.code]
         fn and fn path.province, path.level
         @
-      # 
+      #
       # 铺设路径
-      # 
+      #
       paving : ->
         # 用户选择数据记录
         merge = @mergeData
@@ -759,9 +759,9 @@
                 else
                   $(@).addClass 'active'
         @
-      # 
+      #
       # 渲染页面
-      # 
+      #
       render: (data, name)->
         @oTarget.addClass('hover').siblings().removeClass 'hover'
         # 移除dom
@@ -774,9 +774,9 @@
           o.css 'width', 'auto'
         o.insertAfter obj
         @
-      # 
+      #
       # 创建
-      # 
+      #
       createDom: ( data, merData, name ) ->
         str = '<div class="list-group">'
         type = ''

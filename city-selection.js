@@ -438,7 +438,7 @@ var __hasProp = {}.hasOwnProperty,
           this.tree = sup.tree || {};
           return delete sup.tree;
         }
-        return $.getJSON(sup.url || './tree.js', null, (function(_this) {
+        return $.getJSON(sup.url || './citys.js', null, (function(_this) {
           return function(res) {
             if (!res.no) {
               return _this.tree = res;
