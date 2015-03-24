@@ -351,13 +351,13 @@ var __hasProp = {}.hasOwnProperty,
 
     })(View);
     return CityInterface = (function(_super) {
-      var iTimer, _provinceMap;
+      var citytree, _provinceMap;
 
       __extends(CityInterface, _super);
 
-      iTimer = null;
+      citytree = null;
 
-      CityInterface.version = '1.3.0';
+      CityInterface.version = '1.3.1';
 
       CityInterface.settings = {
         success: '数据提交配置；此配置是一个function，将被调用于实例的getData方法内，参数为当前界面的所有选择城市数据',
@@ -407,7 +407,7 @@ var __hasProp = {}.hasOwnProperty,
           return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-level zl-cc-level-" + da.id + " " + (merge && merge[da.id] ? 'active' : '') + "\" data-id=\"" + da.id + "\">" + da.name + "<b></b></a>";
         },
         'city': function(da, merge) {
-          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-city " + (merge && merge.indexOf(da.addr || da.name) > -1 ? 'active' : '') + "\" data-id=\"" + (da.addr || da.name) + "\">" + da.name + "</a>";
+          return "<a href=\"javascript:;\" class=\"list-group-item zl-cc-city " + (merge && merge.indexOf(da.name) > -1 ? 'active' : '') + "\" data-id=\"" + da.name + "\">" + da.name + "</a>";
         },
         'search': function(name) {
           return "<a href=\"javascript:;\"><input type=\"text\" class=\"list-group-item " + name + "_search\" name=\"" + name + "_search\" style=\"width:100px;height:22px;border:none;outline:none;margin-left: -5px; padding:0 5px;\" placeholder=\"输入检索字段\"></a>";
@@ -435,13 +435,13 @@ var __hasProp = {}.hasOwnProperty,
       CityInterface.prototype.updateConfig = function(sup) {
         this.config = {};
         if (sup.tree) {
-          this.tree = sup.tree || {};
+          citytree = sup.tree || {};
           return delete sup.tree;
         }
         return $.getJSON(sup.url || './citys.js', null, (function(_this) {
           return function(res) {
             if (!res.no) {
-              return _this.tree = res;
+              return citytree = res;
             }
           };
         })(this));
@@ -459,7 +459,7 @@ var __hasProp = {}.hasOwnProperty,
         if (json.readonly) {
           this.$('.zl-city-tree').addClass('zl-city-tree-readonly');
         }
-        this.$('.zl-city-tree').html(this.createDom(this.tree, this.mergeData));
+        this.$('.zl-city-tree').html(this.createDom(citytree, this.mergeData));
         this.print().open();
         this.data = {
           province: 0,
@@ -581,14 +581,14 @@ var __hasProp = {}.hasOwnProperty,
             break;
           case 2:
             str = '港澳台';
-            if (json.city_name) {
-              str = this.tree[2].citys[json.city_name].name;
+            if (json.country_name) {
+              str = citytree[2].countrys[json.country_name].name;
             }
             break;
           case 3:
             str = '海外';
             if (json.country_name) {
-              str = this.tree[3].countrys[json.country_name].name;
+              str = citytree[3].countrys[json.country_name].name;
             }
         }
         return str;
@@ -621,8 +621,8 @@ var __hasProp = {}.hasOwnProperty,
               if (!json['2']) {
                 json['2'] = [];
               }
-              if (c.city_name) {
-                return json['2'].push(c.city_name);
+              if (c.country_name) {
+                return json['2'].push(c.country_name);
               }
             },
             '3': function(c) {
@@ -661,7 +661,7 @@ var __hasProp = {}.hasOwnProperty,
             "2": function() {
               return {
                 large_region_code: +c,
-                city_name: p || void 0
+                country_name: p || void 0
               };
             },
             "3": function() {
@@ -719,13 +719,13 @@ var __hasProp = {}.hasOwnProperty,
         }
         fn = {
           "1": function() {
-            return this.render(this.tree[1]['provinces'], this.mergeData[1], 'province');
+            return this.render(citytree[1]['provinces'], this.mergeData[1]);
           },
           "2": function() {
-            return this.render(this.tree[2]['citys'], this.mergeData[2], 'city');
+            return this.render(citytree[2]['countrys'], this.mergeData[2]);
           },
           "3": function() {
-            return this.render(this.tree[3]['countrys'], this.mergeData[3], 'country');
+            return this.render(citytree[3]['countrys'], this.mergeData[3]);
           }
         }[id];
         if (fn) {
@@ -746,7 +746,7 @@ var __hasProp = {}.hasOwnProperty,
           });
         } else {
           if (id = this.data.province) {
-            this.oTarget = this.$('.zl-cc-province-' + this.tree[1].provinces[id]['id']);
+            this.oTarget = this.$('.zl-cc-province-' + citytree[1].provinces[id]['id']);
             oP = this.$('.zl-city-tree');
             iT = this.oTarget.position().top + this.oTarget.height() - 10;
             if (iT < oP.scrollTop()) {
@@ -764,7 +764,7 @@ var __hasProp = {}.hasOwnProperty,
               true;
             }
           }
-          this.render(this.tree[1]['provinces'][id]['levels'], merge, 'level');
+          this.render(citytree[1]['provinces'][id]['levels'], merge, 'level');
           this.$('.list-group').eq(2).css('top', this.oTarget.position().top);
         } catch (_error) {
           e = _error;
@@ -793,7 +793,7 @@ var __hasProp = {}.hasOwnProperty,
               }
             }
           }
-          this.render(this.tree[1]['provinces'][this.data.province]['levels'][id]['citys'], merge, 'city');
+          this.render(citytree[1]['provinces'][this.data.province]['levels'][id]['citys'], merge, 'city');
           this.$('.list-group').eq(3).css('top', this.oTarget.position().top + 1 * this.$('.list-group').eq(2).css('top').slice(0, -2));
           delete this.oTarget;
         } catch (_error) {
@@ -975,9 +975,9 @@ var __hasProp = {}.hasOwnProperty,
               this.$('.zl-cc-province, .zl-cc-level, .zl-cc-city').removeClass('active');
             } else {
               if (merge = merge[path.province]) {
-                this.$('.zl-cc-province-' + this.tree[1].provinces[path.province].id).addClass('active');
+                this.$('.zl-cc-province-' + citytree[1].provinces[path.province].id).addClass('active');
               } else {
-                this.$('.zl-cc-province-' + this.tree[1].provinces[path.province].id).removeClass('active');
+                this.$('.zl-cc-province-' + citytree[1].provinces[path.province].id).removeClass('active');
               }
               if (path.province === rpath.province) {
                 if (_.isEmpty(merge)) {
@@ -1006,9 +1006,9 @@ var __hasProp = {}.hasOwnProperty,
             }
           } else if (path.code === 2) {
             if (_.isEmpty(merge)) {
-              this.$('.zl-cc-city').removeClass('active');
+              this.$('.zl-cc-country').removeClass('active');
             } else {
-              this.$('.zl-cc-city').each(function() {
+              this.$('.zl-cc-country').each(function() {
                 if (merge.indexOf($(this).attr('data-id')) === -1) {
                   return $(this).removeClass('active');
                 } else {
@@ -1033,14 +1033,14 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CityInterface.prototype.render = function(data, name) {
+      CityInterface.prototype.render = function(data, merage) {
         var o, obj;
         this.oTarget.addClass('hover').siblings().removeClass('hover');
         obj = this.oTarget.parent();
         while (obj.next().length) {
           obj.next().remove();
         }
-        o = $(this.createDom(data, name));
+        o = $(this.createDom(data, merage));
         if (o.find('.zl-cc-country').length) {
           o.css('width', 'auto');
         }
@@ -1048,7 +1048,7 @@ var __hasProp = {}.hasOwnProperty,
         return this;
       };
 
-      CityInterface.prototype.createDom = function(data, merData, name) {
+      CityInterface.prototype.createDom = function(data, merData) {
         var liMap, str, type;
         str = '<div class="list-group">';
         type = '';

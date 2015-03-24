@@ -227,9 +227,9 @@
       mouseUp : -> $(document).off('mousemove').off('mouseup')
     # 城市位置浮层 继承于Popup
     class CityInterface extends Popup
-      iTimer = null
+      citytree = null
       # 版本记录
-      @version = '1.3.0'
+      @version = '1.3.1'
       # # 本地config可配置项信息，updateConfig调用，请勿修改
       @settings =
         success : '数据提交配置；此配置是一个function，将被调用于实例的getData方法内，参数为当前界面的所有选择城市数据'
@@ -270,7 +270,7 @@
         'level': (da, merge) ->
           "<a href=\"javascript:;\" class=\"list-group-item zl-cc-level zl-cc-level-#{da.id} #{if merge and merge[da.id] then 'active' else '' }\" data-id=\"#{da.id}\">#{da.name}<b></b></a>"
         'city': (da, merge) ->
-          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-city #{if merge and merge.indexOf(da.addr or da.name) > -1 then 'active' else '' }\" data-id=\"#{da.addr or da.name}\">#{da.name}</a>"
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-city #{if merge and merge.indexOf(da.name) > -1 then 'active' else '' }\" data-id=\"#{da.name}\">#{da.name}</a>"
         'search': (name) ->
           "<a href=\"javascript:;\"><input type=\"text\" class=\"list-group-item #{name}_search\" name=\"#{name}_search\" style=\"width:100px;height:22px;border:none;outline:none;margin-left: -5px; padding:0 5px;\" placeholder=\"输入检索字段\"></a>"
       # 初始化函数
@@ -303,10 +303,10 @@
         #     @config[k] = sup[k]
         # 存储数据
         if sup.tree
-          @tree = sup.tree or {}
+          citytree = sup.tree or {}
           return delete sup.tree
         # if sup.url and _.isString sup.url
-        $.getJSON sup.url or './citys.js', null, (res) => @tree = res unless res.no
+        $.getJSON sup.url or './citys.js', null, (res) => citytree = res unless res.no
       #
       # 初始化列表
       #
@@ -322,7 +322,7 @@
           @mergeData = @combine json.model
         if json.readonly
           @$('.zl-city-tree').addClass 'zl-city-tree-readonly'
-        @$('.zl-city-tree').html @createDom @tree, @mergeData
+        @$('.zl-city-tree').html @createDom citytree, @mergeData
         #
         @print().open()
         # 数据滞空
@@ -433,12 +433,12 @@
                   str = json.city_name
           when 2
             str = '港澳台'
-            if json.city_name
-              str = @tree[2].citys[json.city_name].name
+            if json.country_name
+              str = citytree[2].countrys[json.country_name].name
           when 3
             str = '海外'
             if json.country_name
-              str = @tree[3].countrys[json.country_name].name
+              str = citytree[3].countrys[json.country_name].name
         str
       #
       # 外部数据合并, { 云引擎专用 } 其他项目根据需要覆盖此函数！！！！
@@ -462,7 +462,7 @@
                     json['1'][ c.province_name ][ c.city_level ].push c.city_name
             '2' : (c) ->
               json['2'] = [] unless json['2']
-              json['2'].push c.city_name if c.city_name
+              json['2'].push c.country_name if c.country_name
             '3' : (c) ->
               json['3'] = [] unless json['3']
               json['3'].push c.country_name if c.country_name
@@ -483,7 +483,7 @@
               city_name : ci or undefined
             "2" : ->
               large_region_code : +c
-              city_name : p or undefined
+              country_name : p or undefined
             "3" : ->
               large_region_code : +c
               country_name : p or undefined
@@ -518,9 +518,9 @@
           if id = @data.code
             @oTarget = @$('.zl-cc-code').eq id - 1
         fn = ({
-          "1": -> @render @tree[1]['provinces'], @mergeData[1], 'province'
-          "2": -> @render @tree[2]['citys'], @mergeData[2], 'city'
-          "3": -> @render @tree[3]['countrys'], @mergeData[3], 'country'
+          "1": -> @render citytree[1]['provinces'], @mergeData[1]
+          "2": -> @render citytree[2]['countrys'], @mergeData[2]
+          "3": -> @render citytree[3]['countrys'], @mergeData[3]
           })[id]
         # console.log fn
         if fn
@@ -535,7 +535,7 @@
           _.extend @data, { "province": id, "level": 0 }
         else
           if id = @data.province
-            @oTarget = @$ '.zl-cc-province-' + @tree[1].provinces[id]['id']
+            @oTarget = @$ '.zl-cc-province-' + citytree[1].provinces[id]['id']
             oP = @$ '.zl-city-tree'
             iT = @oTarget.position().top + @oTarget.height() - 10
             if iT < oP.scrollTop()
@@ -548,7 +548,7 @@
           if merge = @mergeData[1]
             if merge = merge[id]
               yes
-          @render @tree[1]['provinces'][id]['levels'], merge, 'level'
+          @render citytree[1]['provinces'][id]['levels'], merge, 'level'
           @$('.list-group').eq(2).css 'top', @oTarget.position().top
         catch e
           console.log e
@@ -572,7 +572,7 @@
               if merge = merge[id]
                 yes
                 # console.log @data
-          @render @tree[1]['provinces'][@data.province]['levels'][id]['citys'], merge, 'city'
+          @render citytree[1]['provinces'][@data.province]['levels'][id]['citys'], merge, 'city'
           @$('.list-group').eq(3).css 'top', @oTarget.position().top + 1 * @$('.list-group').eq(2).css('top').slice 0, -2
           # 删除对象存储
           delete @oTarget
@@ -716,9 +716,9 @@
               @$( '.zl-cc-province, .zl-cc-level, .zl-cc-city' ).removeClass 'active'
             else
               if merge = merge[path.province]
-                @$( '.zl-cc-province-' + @tree[1].provinces[path.province].id ).addClass 'active'
+                @$( '.zl-cc-province-' + citytree[1].provinces[path.province].id ).addClass 'active'
               else
-                @$( '.zl-cc-province-' + @tree[1].provinces[path.province].id ).removeClass 'active'
+                @$( '.zl-cc-province-' + citytree[1].provinces[path.province].id ).removeClass 'active'
               # level logic
               if path.province is rpath.province
                 if _.isEmpty merge
@@ -741,9 +741,9 @@
           else if path.code is 2
             # city logic
             if _.isEmpty merge
-              @$( '.zl-cc-city' ).removeClass 'active'
+              @$( '.zl-cc-country' ).removeClass 'active'
             else
-              @$( '.zl-cc-city' ).each ->
+              @$( '.zl-cc-country' ).each ->
                 if merge.indexOf( $(@).attr('data-id') ) is -1
                   $(@).removeClass 'active'
                 else
@@ -762,14 +762,14 @@
       #
       # 渲染页面
       #
-      render: (data, name)->
+      render: (data, merage)->
         @oTarget.addClass('hover').siblings().removeClass 'hover'
         # 移除dom
         obj = @oTarget.parent()
         while  obj.next().length
           obj.next().remove()
         # dom添加
-        o = $ @createDom data, name
+        o = $ @createDom data, merage
         if o.find( '.zl-cc-country' ).length
           o.css 'width', 'auto'
         o.insertAfter obj
@@ -777,7 +777,7 @@
       #
       # 创建
       #
-      createDom: ( data, merData, name ) ->
+      createDom: ( data, merData ) ->
         str = '<div class="list-group">'
         type = ''
         liMap = @liMap

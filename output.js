@@ -17,7 +17,7 @@
       id: 2,
       name: "港澳台",
       type: "code",
-      citys: {}
+      countrys: {}
     },
     "3": {
       id: 3,
@@ -84,10 +84,11 @@
           };
         }
         if (d.large_region_code === '2') {
-          treeTemp.citys[d.country_addr] = {
+          treeTemp.countrys[d.country_addr] = {
             "addr": d.country_addr,
             "ename": d.country_ename,
-            "name": d.country_name
+            "name": d.country_name,
+            "type": "country"
           };
         }
         if (d.large_region_code === '3') {
