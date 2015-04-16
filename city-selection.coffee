@@ -264,7 +264,7 @@
         'code': (da, merge) ->
           "<a href=\"javascript:;\" class=\"list-group-item zl-cc-code zl-cc-code-#{da.id} #{if merge and merge[da.id] then 'active' else ''}\" data-id=\"#{da.id}\">#{da.name}<b></b></a>"
         'country': (da, merge) ->
-          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-country #{if merge and merge.indexOf(da.addr) > -1 then 'active' else '' }\" data-id=\"#{da.addr}\" title=\"#{da.ename}\">#{da.name or da.ename}</a>"
+          "<a href=\"javascript:;\" class=\"list-group-item zl-cc-country #{if merge and merge.indexOf(da.addr) > -1 then 'active' else '' }\" data-id=\"#{da.addr}\" title=\"#{da.ename}\">#{da.name or da.ename or da.addr}</a>"
         'province': (da, merge) ->
           "<a href=\"javascript:;\" class=\"list-group-item zl-cc-province zl-cc-province-#{da.id} #{if merge and merge[da.name] then 'active' else ''}\" data-id=\"#{da.id}\">#{da.name}<b></b></a>"
         'level': (da, merge) ->
@@ -412,7 +412,7 @@
         str = ''
         del = if @readonly then '' else '<a class="zl-cc-del-btn" href="javascript:;">x</a>'
         _.each @explode(), (c) =>
-          str += '<span class="tag" data-c="' + c.large_region_code + '" data-p="' + ( c.province_name or 0 ) + '" data-l="' + ( c.city_level or 0 ) + '" data-ci="' + ( c.city_name or c.country_name or '' ) + '"><span>' + @translate( c ) + '&nbsp;&nbsp;</span>' + del + '</span>'
+          str += "<span class=\"tag\" data-c=\"#{c.large_region_code}\" data-p=\"#{c.province_name or 0}\" data-l=\"#{c.city_level or 0}\" data-ci=\"#{c.city_name or c.country_name or ''}\"><span>#{@translate( c )}&nbsp;&nbsp;</span>#{del}</span>"
         @$( '.zl-city-ctn' ).html str or '无已选择地区'
         @
       #
@@ -422,6 +422,8 @@
         _json = {}
         str = ''
         switch json.large_region_code
+          when 0
+            str = '未知'
           when 1
             _json
             str = '大陆'
@@ -438,7 +440,8 @@
           when 3
             str = '海外'
             if json.country_name
-              str = citytree[3].countrys[json.country_name].name
+              temp = citytree[3].countrys[json.country_name]
+              str = temp.name or temp.ename or temp.addr
         str
       #
       # 外部数据合并, { 云引擎专用 } 其他项目根据需要覆盖此函数！！！！
@@ -449,6 +452,7 @@
           # 修正省份数据
           # _.each data, (v,k) -> v.province_name = _provinceMap[v.province_name]
           map =
+            '0' : -> json['0'] = []
             '1' : (c) ->
               unless json['1']
                 json['1'] = {}
@@ -476,18 +480,19 @@
         record = []
         add = ( c, p, l, ci ) ->
           map =
+            "0" : -> large_region_code : 0
             "1" : ->
-              large_region_code : +c
+              large_region_code : 1
               province_name : p or undefined
               city_level : +l or undefined
               city_name : ci or undefined
             "2" : ->
-              large_region_code : +c
+              large_region_code : 2
               country_name : p or undefined
             "3" : ->
-              large_region_code : +c
+              large_region_code : 3
               country_name : p or undefined
-          record.push map[ c ]() if c
+          record.push map[ c ]()
         slice = Array::slice
         ( self = ( data ) ->
           args = slice.call arguments, 1
@@ -549,7 +554,7 @@
             if merge = merge[id]
               yes
           @render citytree[1]['provinces'][id]['levels'], merge, 'level'
-          @$('.list-group').eq(2).css 'top', @oTarget.position().top
+          @$('.list-group').eq(2).css 'top', @oTarget.position().top + 1 * @$('.list-group').eq(2).css('top').slice 0, -2
         catch e
           console.log e
         @
@@ -604,6 +609,11 @@
         path = json or @data
         merge = @mergeData
         fn = ({
+          '0' : ->
+            if merge[0]
+              delete merge[0]
+            else
+              merge[0] = []
           '1' : ( p, l) ->
             if p
               # code logic

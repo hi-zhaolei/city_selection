@@ -27,7 +27,7 @@
     }
   };
 
-  fs.readFile('./ip库.txt', 'utf8', function(err, data) {
+  fs.readFile('./final.txt', 'utf8', function(err, data) {
     var c, p, ref;
     if (err) {
       throw err;
@@ -92,15 +92,21 @@
           };
         }
         if (d.large_region_code === '3') {
-          if (d.country_ename !== 'unknown') {
-            return treeTemp.countrys[d.country_addr] = {
-              "addr": d.country_addr,
-              "ename": d.country_ename,
-              "name": d.country_name === 'unknown' ? '' : d.country_name,
-              "type": "country"
-            };
-          }
+          treeTemp.countrys[d.country_addr] = {
+            "addr": d.country_addr,
+            "ename": d.country_ename === 'unknown' ? '' : d.country_ename,
+            "name": d.country_name === 'unknown' ? '' : d.country_name,
+            "type": "country"
+          };
         }
+      }else{
+        if (!tree[0]) {
+          tree[0] = {
+            id: 0,
+            name: "未知",
+            type: "code"
+          }
+        };
       }
     });
     ref = tree[1].provinces;
